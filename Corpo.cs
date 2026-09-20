@@ -60,6 +60,9 @@
         public double VelX { get; set; } /* Velocidade no eixo X, em metros por segundo (m/s) */
         public double VelY { get; set; } /* Velocidade no eixo Y, em metros por segundo (m/s) */
 
+        public double ForcaX { get; set; }
+        public double ForcaY { get; set; }
+
         // O raio não é armazenado separadamente porque depende
         // diretamente da massa e da densidade do corpo.
         public double Raio => CalcularRaio();
