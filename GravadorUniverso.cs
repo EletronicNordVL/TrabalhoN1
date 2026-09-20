@@ -11,7 +11,10 @@ public class GravadorArquivoTexto : GravadorUniverso
 {
     public override void Salvar(Universo universo, string caminho)
     { // System.IO // }
+        throw new NotImplementedException();
+    }
     public override Universo Carregar(string caminho)
     { // System.IO // }
+        throw new NotImplementedException();
     }
 }

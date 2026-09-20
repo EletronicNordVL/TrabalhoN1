@@ -1,18 +1,93 @@
-﻿using System;
-
-public class Corpo
+﻿namespace TrabalhoN1
 {
-    public string Nome { get; set; }
-    public double Massa { get; set; }      // kg
-    public double Densidade { get; set; }  // kg/m³
-    public double PosX { get; set; }       // m
-    public double PosY { get; set; }       // m
-    public double VelX { get; set; }       // m/s
-    public double VelY { get; set; }       // m/s
+    public class Corpo
+    {
+        private const double DensidadeMaxima = 1e18;
+        private string nome;
+        private double massa;
+        private double densidade;
 
-    public double Raio { get; private set; } // Com o raio calculado, não vem de fora.
+        public string Nome
+        {
+            get => nome;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentException(
+                        "O nome do corpo não pode ser vazio.");
 
-    // O construtor irá recebe os 7 atributos e já calcula o Raio a partir da
-    // Massa/Densidade (Essa é a fórmula do volume da esfera isolando o "r")
+                nome = value;
+            }
+        }
+
+        public double Massa
+        {
+            get => massa;
+            set
+            {
+                if (value <= 0)
+                    throw new ArgumentException(
+                        "A massa deve ser maior que zero.");
+
+                massa = value;
+            }
+        }
+
+        public double Densidade
+        {
+            get => densidade;
+            set
+            {
+                if (value <= 0)
+                {
+                    throw new ArgumentException(
+                        "A densidade deve ser maior que zero.");
+                }
+
+                if (value > DensidadeMaxima)
+                {
+                    throw new ArgumentException(
+                        "A densidade excede o limite máximo permitido.");
+                }
+
+                densidade = value;
+            }
+        }
+
+        public double PosX { get; set; }
+        public double PosY { get; set; }
+        public double VelX { get; set; }
+        public double VelY { get; set; }
+
+        // O raio não é armazenado separadamente porque depende
+        // diretamente da massa e da densidade do corpo.
+        public double Raio => CalcularRaio();
+
+        public Corpo(
+            string nome,
+            double massa,
+            double densidade,
+            double posX,
+            double posY,
+            double velX,
+            double velY)
+        {
+            Nome = nome;
+            Massa = massa;
+            Densidade = densidade;
+            PosX = posX;
+            PosY = posY;
+            VelX = velX;
+            VelY = velY;
+        }
+
+        public double CalcularRaio()
+        {
+            double volume = Massa / Densidade;
+
+            return Math.Cbrt(
+                (3 * volume) / (4 * Math.PI)
+            );
+        }
+    }
 }
-
