@@ -3,10 +3,9 @@
     public class Corpo
     {
         private const double DensidadeMaxima = 1e18;
-        private string nome;
-        private double massa;
+        private string nome; 
+        private double massa; 
         private double densidade;
-
         public string Nome
         {
             get => nome;
@@ -20,6 +19,7 @@
             }
         }
 
+        /* É medida em quilogramas (kg) e representa a quantidade de matéria contida no corpo. */
         public double Massa
         {
             get => massa;
@@ -33,6 +33,7 @@
             }
         }
 
+        /* Densidade do corpo, em quilogramas por metro cúbico (kg/m³) */
         public double Densidade
         {
             get => densidade;
@@ -54,10 +55,10 @@
             }
         }
 
-        public double PosX { get; set; }
-        public double PosY { get; set; }
-        public double VelX { get; set; }
-        public double VelY { get; set; }
+        public double PosX { get; set; } /* Posição no eixo X, em metros (m) */
+        public double PosY { get; set; } /* Posição no eixo Y, em metros (m) */
+        public double VelX { get; set; } /* Velocidade no eixo X, em metros por segundo (m/s) */
+        public double VelY { get; set; } /* Velocidade no eixo Y, em metros por segundo (m/s) */
 
         // O raio não é armazenado separadamente porque depende
         // diretamente da massa e da densidade do corpo.
