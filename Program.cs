@@ -1,66 +1,111 @@
 ﻿using System;
 using TrabalhoN1;
 
-Corpo corpo1 = new Corpo(
-    "Corpo 1",
-    1000,
-    1000,
-    0,
-    0,
-    1,
-    0
-);
+Console.WriteLine("SIMULADOR GRAVITACIONAL 2D");
+Console.WriteLine();
 
-Corpo corpo2 = new Corpo(
-    "Corpo 2",
-    2000,
-    2000,
-    10,
-    0,
-    -1,
-    0
-);
+Console.WriteLine("1 - Criar novo universo");
+Console.WriteLine("2 - Carregar universo salvo");
+Console.WriteLine("0 - Sair");
 
-Universo universo = new Universo();
+Console.WriteLine();
+Console.Write("Escolha uma opção: ");
 
-universo.AdicionarCorpo(corpo1);
-universo.AdicionarCorpo(corpo2);
+string? opcao = Console.ReadLine();
 
-universo.QuantidadeIteracoes = 10;
-universo.TempoEntreIteracoes = 1;
+Console.WriteLine();
 
-GravadorArquivoTexto gravador =
-    new GravadorArquivoTexto();
-
-gravador.Salvar(
-    universo,
-    "universo.txt"
-);
-
-Console.WriteLine("Universo salvo com sucesso.");
-
-Universo universoCarregado =
-    gravador.Carregar("universo.txt");
-
-Console.WriteLine(
-    $"Iterações carregadas: " +
-    $"{universoCarregado.QuantidadeIteracoes}");
-
-Console.WriteLine(
-    $"Tempo entre iterações carregado: " +
-    $"{universoCarregado.TempoEntreIteracoes}");
-
-Console.WriteLine(
-    $"Quantidade de corpos carregados: " +
-    $"{universoCarregado.Corpos.Count}");
-
-foreach (Corpo corpo in universoCarregado.Corpos)
+switch (opcao)
 {
-    Console.WriteLine(
-        $"{corpo.Nome} - " +
-        $"Massa: {corpo.Massa} - " +
-        $"Densidade: {corpo.Densidade} - " +
-        $"Posição: ({corpo.PosX}, {corpo.PosY}) - " +
-        $"Velocidade: ({corpo.VelX}, {corpo.VelY})"
-    );
+    case "1":
+        Console.Write("Digite a quantidade de corpos: ");
+
+        int quantidadeCorpos =
+            int.Parse(Console.ReadLine()!);
+
+        Universo universo = new Universo();
+
+        universo.GerarCorposAleatorios(quantidadeCorpos);
+
+        Console.Write("Digite a quantidade de iterações: ");
+        universo.QuantidadeIteracoes =
+            int.Parse(Console.ReadLine()!);
+
+        Console.Write("Digite o tempo entre as iterações (em segundos): ");
+        universo.TempoEntreIteracoes =
+            double.Parse(Console.ReadLine()!);
+
+        Console.WriteLine();
+        Console.WriteLine("Corpos gerados:");
+        Console.WriteLine();
+
+        universo.ExibirEstado();
+
+        GravadorArquivoTexto gravador =
+            new GravadorArquivoTexto();
+
+        gravador.Salvar(
+            universo,
+            "universo.txt"
+        );
+
+        Console.WriteLine();
+        Console.WriteLine(
+            "Configuração inicial salva em universo.txt."
+        );
+
+        Console.WriteLine();
+        Console.WriteLine("Iniciando simulação...");
+        Console.WriteLine();
+
+        universo.ExecutarSimulacao(
+            universo.QuantidadeIteracoes,
+            universo.TempoEntreIteracoes
+        );
+
+        break;
+
+    case "2":
+        GravadorArquivoTexto gravadorCarregar =
+        new GravadorArquivoTexto();
+
+        Universo universoCarregado =
+            gravadorCarregar.Carregar("universo.txt");
+
+        Console.WriteLine("Universo carregado com sucesso.");
+        Console.WriteLine();
+
+        Console.WriteLine(
+            $"Quantidade de corpos: {universoCarregado.Corpos.Count}");
+
+        Console.WriteLine(
+            $"Quantidade de iterações: {universoCarregado.QuantidadeIteracoes}");
+
+        Console.WriteLine(
+            $"Tempo entre iterações: {universoCarregado.TempoEntreIteracoes}");
+
+        Console.WriteLine();
+        Console.WriteLine("Corpos carregados:");
+        Console.WriteLine();
+
+        universoCarregado.ExibirEstado();
+
+        Console.WriteLine();
+        Console.WriteLine("Continuando simulação...");
+        Console.WriteLine();
+
+        universoCarregado.ExecutarSimulacao(
+            universoCarregado.QuantidadeIteracoes,
+            universoCarregado.TempoEntreIteracoes
+        );
+
+        break;
+
+    case "0":
+        Console.WriteLine("Programa encerrado.");
+        break;
+
+    default:
+        Console.WriteLine("Opção inválida.");
+        break;
 }

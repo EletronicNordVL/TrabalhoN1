@@ -143,17 +143,51 @@ public class Universo
                 double somaRaios =
                     corpo1.Raio + corpo2.Raio;
 
-                if (distancia <= somaRaios && distancia > 0)
+                if (distancia <= somaRaios)
                 {
                     Console.WriteLine(
                         $"Colisão detectada entre " +
                         $"{corpo1.Nome} e {corpo2.Nome}");
 
-                    double normalX =
-                        (corpo2.PosX - corpo1.PosX) / distancia;
+                    double normalX;
+                    double normalY;
 
-                    double normalY =
-                        (corpo2.PosY - corpo1.PosY) / distancia;
+                    if (distancia > 0)
+                    {
+                        normalX =
+                            (corpo2.PosX - corpo1.PosX) / distancia;
+
+                        normalY =
+                            (corpo2.PosY - corpo1.PosY) / distancia;
+                    }
+                    else
+                    {
+                        double diferencaVelX =
+                            corpo1.VelX - corpo2.VelX;
+
+                        double diferencaVelY =
+                            corpo1.VelY - corpo2.VelY;
+
+                        double moduloVelocidade =
+                            Math.Sqrt(
+                                diferencaVelX * diferencaVelX +
+                                diferencaVelY * diferencaVelY
+                            );
+
+                        if (moduloVelocidade == 0)
+                        {
+                            normalX = 1;
+                            normalY = 0;
+                        }
+                        else
+                        {
+                            normalX =
+                                diferencaVelX / moduloVelocidade;
+
+                            normalY =
+                                diferencaVelY / moduloVelocidade;
+                        }
+                    }
 
                     Console.WriteLine(
                         $"Normal da colisão: " +
@@ -237,6 +271,34 @@ public class Universo
             ExibirEstado();
 
             Console.WriteLine();
+        }
+    }
+
+    public void GerarCorposAleatorios(int quantidade)
+    {
+        Random random = new Random();
+
+        for (int i = 0; i < quantidade; i++)
+        {
+            string nome = $"Corpo {i + 1}";
+            double massa = random.NextDouble() * 1000 + 100;
+            double densidade = random.NextDouble() * 1000 + 100;
+            double posX = random.NextDouble() * 100 - 50;
+            double posY = random.NextDouble() * 100 - 50;
+            double velX = random.NextDouble() * 2 - 1;
+            double velY = random.NextDouble() * 2 - 1;
+
+            Corpo corpo = new Corpo(
+                nome,
+                massa,
+                densidade,
+                posX,
+                posY,
+                velX,
+                velY
+            );
+
+            AdicionarCorpo(corpo);
         }
     }
 }
