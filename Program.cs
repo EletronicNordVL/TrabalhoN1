@@ -1,5 +1,6 @@
 ﻿using System;
 using TrabalhoN1;
+
 Corpo corpo1 = new Corpo(
     "Corpo 1",
     1000,
@@ -7,17 +8,17 @@ Corpo corpo1 = new Corpo(
     0,
     0,
     1,
-    1
+    0
 );
 
 Corpo corpo2 = new Corpo(
     "Corpo 2",
-    1000,
-    1000,
-    0.8,
-    0.8,
+    2000,
+    2000,
+    10,
+    0,
     -1,
-    -1
+    0
 );
 
 Universo universo = new Universo();
@@ -25,30 +26,41 @@ Universo universo = new Universo();
 universo.AdicionarCorpo(corpo1);
 universo.AdicionarCorpo(corpo2);
 
-universo.TratarColisoes();
+universo.QuantidadeIteracoes = 10;
+universo.TempoEntreIteracoes = 1;
 
-double deltaX = corpo2.PosX - corpo1.PosX;
-double deltaY = corpo2.PosY - corpo1.PosY;
+GravadorArquivoTexto gravador =
+    new GravadorArquivoTexto();
 
-double distanciaFinal = Math.Sqrt(
-    deltaX * deltaX +
-    deltaY * deltaY
+gravador.Salvar(
+    universo,
+    "universo.txt"
 );
 
-double somaRaios =
-    corpo1.Raio + corpo2.Raio;
+Console.WriteLine("Universo salvo com sucesso.");
+
+Universo universoCarregado =
+    gravador.Carregar("universo.txt");
 
 Console.WriteLine(
-    $"Distância final: {distanciaFinal:F6} m");
+    $"Iterações carregadas: " +
+    $"{universoCarregado.QuantidadeIteracoes}");
 
 Console.WriteLine(
-    $"Soma dos raios: {somaRaios:F6} m");
+    $"Tempo entre iterações carregado: " +
+    $"{universoCarregado.TempoEntreIteracoes}");
 
 Console.WriteLine(
-    $"Velocidade final Corpo 1: " +
-    $"({corpo1.VelX:F4}, {corpo1.VelY:F4})");
+    $"Quantidade de corpos carregados: " +
+    $"{universoCarregado.Corpos.Count}");
 
-Console.WriteLine(
-    $"Velocidade final Corpo 2: " +
-    $"({corpo2.VelX:F4}, {corpo2.VelY:F4})");
-
+foreach (Corpo corpo in universoCarregado.Corpos)
+{
+    Console.WriteLine(
+        $"{corpo.Nome} - " +
+        $"Massa: {corpo.Massa} - " +
+        $"Densidade: {corpo.Densidade} - " +
+        $"Posição: ({corpo.PosX}, {corpo.PosY}) - " +
+        $"Velocidade: ({corpo.VelX}, {corpo.VelY})"
+    );
+}

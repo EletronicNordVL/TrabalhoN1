@@ -9,6 +9,10 @@ public class Universo
 
     public List<Corpo> Corpos { get; private set; }
 
+    public int QuantidadeIteracoes { get; set; }
+
+    public double TempoEntreIteracoes { get; set; }
+
     public Universo()
     {
         Corpos = new List<Corpo>();
