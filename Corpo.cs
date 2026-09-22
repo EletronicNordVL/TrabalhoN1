@@ -1,4 +1,5 @@
-﻿namespace TrabalhoN1
+﻿using System;
+namespace TrabalhoN1
 {
     public class Corpo
     {
