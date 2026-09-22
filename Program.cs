@@ -51,3 +51,13 @@ foreach (Corpo corpo in universo.Corpos)
     Console.WriteLine(
         $"{corpo.Nome}: Fx = {corpo.ForcaX:E4} N | Fy = {corpo.ForcaY:E4} N");
 }
+
+universo.AtualizarPosicoes(1);
+
+foreach (Corpo corpo in universo.Corpos)
+{
+    Console.WriteLine(
+        $"{corpo.Nome}: " +
+        $"X = {corpo.PosX:F12} m | " +
+        $"Y = {corpo.PosY:F12} m");
+}

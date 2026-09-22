@@ -100,6 +100,27 @@ public class Universo
     // Atualiza velocidade e posição dos corpos em cada iteração.
     public void AtualizarPosicoes(double tempoEntreIteracoes)
     {
+        foreach (Corpo corpo in Corpos)
+        {
+            corpo.AceleracaoX = corpo.ForcaX / corpo.Massa;
+            corpo.AceleracaoY = corpo.ForcaY / corpo.Massa;
+
+            corpo.PosX +=
+            corpo.VelX * tempoEntreIteracoes
+            + (corpo.AceleracaoX / 2)
+            * Math.Pow(tempoEntreIteracoes, 2);
+
+            corpo.PosY +=
+                corpo.VelY * tempoEntreIteracoes
+                + (corpo.AceleracaoY / 2)
+                * Math.Pow(tempoEntreIteracoes, 2);
+
+            corpo.VelX +=
+                corpo.AceleracaoX * tempoEntreIteracoes;
+
+            corpo.VelY +=
+                corpo.AceleracaoY * tempoEntreIteracoes;
+        }
     }
 
     // Verifica colisões e recalcula as velocidades quando necessário.
