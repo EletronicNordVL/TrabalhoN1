@@ -4,7 +4,7 @@ namespace TrabalhoN1
     public class Corpo
     {
         private const double DensidadeMaxima = 1e18;
-        private string nome; 
+        private string nome = string.Empty;
         private double massa; 
         private double densidade;
         public string Nome
@@ -89,7 +89,7 @@ namespace TrabalhoN1
             VelY = velY;
         }
 
-        public double CalcularRaio()
+        private double CalcularRaio()
         {
             double volume = Massa / Densidade;
 

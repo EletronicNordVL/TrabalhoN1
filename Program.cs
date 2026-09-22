@@ -1,63 +1,54 @@
 ﻿using System;
-namespace TrabalhoN1;
-
-Corpo corpoA = new Corpo(
-    "Corpo A",
+using TrabalhoN1;
+Corpo corpo1 = new Corpo(
+    "Corpo 1",
     1000,
-    5000,
-    10,
-    20,
-    2,
-    -1
-);
-
-Corpo corpoB = new Corpo(
-    "Corpo B",
-    2000,
-    6000,
-    50,
-    30,
-    -1,
-    2
-);
-
-Corpo corpoC = new Corpo(
-    "Corpo C",
-    1500,
-    5500,
-    30,
-    60,
+    1000,
     0,
-    0
+    0,
+    1,
+    1
+);
+
+Corpo corpo2 = new Corpo(
+    "Corpo 2",
+    1000,
+    1000,
+    0.8,
+    0.8,
+    -1,
+    -1
 );
 
 Universo universo = new Universo();
 
-universo.AdicionarCorpo(corpoA);
-universo.AdicionarCorpo(corpoB);
-universo.AdicionarCorpo(corpoC);
+universo.AdicionarCorpo(corpo1);
+universo.AdicionarCorpo(corpo2);
 
-Console.WriteLine($"Quantidade de corpos: {universo.Corpos.Count}");
+universo.TratarColisoes();
 
-foreach (Corpo corpo in universo.Corpos)
-{
-    Console.WriteLine(
-        $"{corpo.Nome} - Posição: ({corpo.PosX}, {corpo.PosY})");
-}
-universo.CalcularForcas();
+double deltaX = corpo2.PosX - corpo1.PosX;
+double deltaY = corpo2.PosY - corpo1.PosY;
 
-foreach (Corpo corpo in universo.Corpos)
-{
-    Console.WriteLine(
-        $"{corpo.Nome}: Fx = {corpo.ForcaX:E4} N | Fy = {corpo.ForcaY:E4} N");
-}
+double distanciaFinal = Math.Sqrt(
+    deltaX * deltaX +
+    deltaY * deltaY
+);
 
-universo.AtualizarPosicoes(1);
+double somaRaios =
+    corpo1.Raio + corpo2.Raio;
 
-foreach (Corpo corpo in universo.Corpos)
-{
-    Console.WriteLine(
-        $"{corpo.Nome}: " +
-        $"X = {corpo.PosX:F12} m | " +
-        $"Y = {corpo.PosY:F12} m");
-}
+Console.WriteLine(
+    $"Distância final: {distanciaFinal:F6} m");
+
+Console.WriteLine(
+    $"Soma dos raios: {somaRaios:F6} m");
+
+Console.WriteLine(
+    $"Velocidade final Corpo 1: " +
+    $"({corpo1.VelX:F4}, {corpo1.VelY:F4})");
+
+Console.WriteLine(
+    $"Velocidade final Corpo 2: " +
+    $"({corpo2.VelX:F4}, {corpo2.VelY:F4})");
+
