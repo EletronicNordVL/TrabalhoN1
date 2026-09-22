@@ -1,4 +1,6 @@
-﻿using TrabalhoN1;
+﻿using System;
+using System.Collections.Generic;
+namespace TrabalhoN1;
 
 public class Universo
 {

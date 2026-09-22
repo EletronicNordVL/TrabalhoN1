@@ -1,4 +1,5 @@
-﻿using TrabalhoN1;
+﻿using System;
+namespace TrabalhoN1;
 
 Corpo corpoA = new Corpo(
     "Corpo A",

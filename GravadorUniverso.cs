@@ -1,4 +1,5 @@
 ﻿using System;
+namespace TrabalhoN1;
 
 // Essa é a classe abstrata para gravar os dados do universo em um arquivo txt.
 public abstract class GravadorUniverso
