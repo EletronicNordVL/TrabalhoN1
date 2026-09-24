@@ -1,6 +1,7 @@
 ﻿using System;
 using TrabalhoN1;
 
+/* Apresentar o menu de opções para o usuário, permitindo criar um novo universo ou carregar um universo salvo. */
 Console.WriteLine("SIMULADOR GRAVITACIONAL 2D");
 Console.WriteLine();
 
@@ -15,6 +16,7 @@ string? opcao = Console.ReadLine();
 
 Console.WriteLine();
 
+/* Executar a opção escolhida pelo usuário. */
 switch (opcao)
 {
     case "1":
@@ -65,6 +67,7 @@ switch (opcao)
 
         break;
 
+    /* Carregar um universo salvo de um arquivo txt e continuar a simulação. */
     case "2":
         GravadorArquivoTexto gravadorCarregar =
         new GravadorArquivoTexto();
@@ -101,6 +104,7 @@ switch (opcao)
 
         break;
 
+    /* Encerrar o programa. */
     case "0":
         Console.WriteLine("Programa encerrado.");
         break;

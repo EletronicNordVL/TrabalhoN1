@@ -1,6 +1,8 @@
 ﻿using System;
 namespace TrabalhoN1
 {
+    /* Essa classe representa um corpo no universo, com propriedades como 
+     * nome, massa, densidade, posição, velocidade, força e aceleração. */
     public class Corpo
     {
         private const double DensidadeMaxima = 1e18;
@@ -61,16 +63,17 @@ namespace TrabalhoN1
         public double VelX { get; set; } /* Velocidade no eixo X, em metros por segundo (m/s) */
         public double VelY { get; set; } /* Velocidade no eixo Y, em metros por segundo (m/s) */
 
-        public double ForcaX { get; set; }
-        public double ForcaY { get; set; }
+        public double ForcaX { get; set; } /* Força resultante no eixo X, em newtons (N) */
+        public double ForcaY { get; set; } /* Força resultante no eixo Y, em newtons (N) */
 
-        public double AceleracaoX { get; set; }
-        public double AceleracaoY { get; set; }
+        public double AceleracaoX { get; set; } /* Aceleração no eixo X, em metros por segundo ao quadrado (m/s²) */
+        public double AceleracaoY { get; set; } /* Aceleração no eixo Y, em metros por segundo ao quadrado (m/s²) */
 
-        // O raio não é armazenado separadamente porque depende
-        // diretamente da massa e da densidade do corpo.
+        /* O raio não é armazenado separadamente porque depende */
+        /* diretamente da massa e da densidade do corpo. */
         public double Raio => CalcularRaio();
 
+        /* Construtor da classe Corpo. */
         public Corpo(
             string nome,
             double massa,
@@ -89,6 +92,7 @@ namespace TrabalhoN1
             VelY = velY;
         }
 
+        /* Função privada que calcula o raio do corpo com base na massa e densidade. */
         private double CalcularRaio()
         {
             /* A partir da densidade (d = m/v), isolamos o volume: v = m/d */

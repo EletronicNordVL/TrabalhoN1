@@ -4,7 +4,7 @@ namespace TrabalhoN1;
 
 public class Universo
 {
-    // Constante gravitacional utilizada no cálculo da força entre os corpos.
+    /* Constante gravitacional utilizada no cálculo da força entre os corpos. */
     private const double G = 6.674184e-11;
 
     public List<Corpo> Corpos { get; private set; }
@@ -13,16 +13,19 @@ public class Universo
 
     public double TempoEntreIteracoes { get; set; }
 
+    /* Construtor da classe Universo. */
     public Universo()
     {
         Corpos = new List<Corpo>();
     }
 
+    /* Adiciona um corpo ao universo. */
     public void AdicionarCorpo(Corpo corpo)
     {
         Corpos.Add(corpo);
     }
 
+    /* Calcula a distância entre dois corpos. */
     private double CalcularDistancia(Corpo corpo1, Corpo corpo2)
     {
         double deltaX = corpo2.PosX - corpo1.PosX;
@@ -34,7 +37,7 @@ public class Universo
         );
     }
 
-    // Calcula a força gravitacional entre dois corpos.
+    /* Calcula a força gravitacional entre dois corpos. */
     private double CalcularForcaGravitacional(
         Corpo corpo1,
         Corpo corpo2)
@@ -50,10 +53,10 @@ public class Universo
                / (distancia * distancia);
     }
 
-    // Calcula a força gravitacional resultante sobre os corpos.
+    /* Calcula a força gravitacional resultante sobre os corpos. */
     public void CalcularForcas()
     {
-        // Zera as forças da iteração anterior para não acumular com o novo ciclo..
+        /* Zera as forças da iteração anterior para não acumular com o novo ciclo. */
         foreach (Corpo corpo in Corpos)
         {
             corpo.ForcaX = 0;
@@ -135,7 +138,7 @@ public class Universo
         }
     }
 
-    // Verifica colisões e recalcula as velocidades quando necessário.
+    /* Verifica colisões e recalcula as velocidades quando necessário. */
     public void TratarColisoes()
     {
         for (int i = 0; i < Corpos.Count; i++)
@@ -148,6 +151,7 @@ public class Universo
                 double distancia =
                     CalcularDistancia(corpo1, corpo2);
 
+                /* A soma dos raios dos corpos é utilizada para determinar se houve colisão. */
                 double somaRaios =
                     corpo1.Raio + corpo2.Raio;
 
@@ -197,6 +201,8 @@ public class Universo
                         }
                     }
 
+                    /* A normal da colisão é um vetor unitário que aponta da posição do 
+                     * corpo 1 para a posição do corpo 2. */
                     Console.WriteLine(
                         $"Normal da colisão: " +
                         $"({normalX:F4}, {normalY:F4})");
@@ -207,7 +213,7 @@ public class Universo
                     double velocidadeRelativaY =
                         corpo2.VelY - corpo1.VelY;
 
-                    /* Se a velocidade relativa na normal for maior ou igual a zero, significa que os corpos estão se afastando e não é necessário tratar a colisão. */
+                    /* Aqui é para calcular a velocidade relativa entre os corpos na direção do impacto (normal) */
                     double velocidadeNaNormal =
                         velocidadeRelativaX * normalX
                         + velocidadeRelativaY * normalY;
@@ -222,6 +228,7 @@ public class Universo
                         continue;
                     }
 
+                    /* CONSERVAÇÃO DA QUANTIDADE DE MOVIMENTO (Q = m * v) */
                     /* Este cálculo de impulso deriva da fórmula da conservação do momento linear em uma colisão elástica bidimensional (Q_antes = Q_depois). */
                     double impulso =
                         -(2 * velocidadeNaNormal)
@@ -238,7 +245,7 @@ public class Universo
                     corpo2.VelX += impulsoX / corpo2.Massa;
                     corpo2.VelY += impulsoY / corpo2.Massa;
 
-                    /* Resolve a sobreposição: separa os corpos fisicamente para não ficarem "presos" */
+                    /* Resolve a sobreposição: separa os corpos fisicamente para não ficarem "presos". */
                     double sobreposicao =
                         somaRaios - distancia;
 
@@ -267,7 +274,7 @@ public class Universo
         }
     }
 
-    // Executa as iterações da simulação.
+    /* Executa as iterações da simulação. */
     public void ExecutarSimulacao(
         int iteracoes,
         double tempoEntreIteracoes)
@@ -288,10 +295,12 @@ public class Universo
         }
     }
 
+    /* Gera corpos aleatórios para a simulação. */
     public void GerarCorposAleatorios(int quantidade)
     {
         Random random = new Random();
 
+        /* Gera corpos com propriedades aleatórias dentro de intervalos definidos. */
         for (int i = 0; i < quantidade; i++)
         {
             string nome = $"Corpo {i + 1}";
