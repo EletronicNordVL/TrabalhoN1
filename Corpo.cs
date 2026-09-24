@@ -91,8 +91,10 @@ namespace TrabalhoN1
 
         private double CalcularRaio()
         {
+            /* A partir da densidade (d = m/v), isolamos o volume: v = m/d */
             double volume = Massa / Densidade;
 
+            /* Considerando que o corpo é uma esfera, a fórmula do volume é V = (4/3) * PI * r^3. Logo, se isolarmos o raio, temos a raiz cúbica de (3 * V) / (4 * PI) */
             return Math.Cbrt(
                 (3 * volume) / (4 * Math.PI)
             );

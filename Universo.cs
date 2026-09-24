@@ -53,14 +53,14 @@ public class Universo
     // Calcula a força gravitacional resultante sobre os corpos.
     public void CalcularForcas()
     {
-        // Zera as forças da iteração anterior.
+        // Zera as forças da iteração anterior para não acumular com o novo ciclo..
         foreach (Corpo corpo in Corpos)
         {
             corpo.ForcaX = 0;
             corpo.ForcaY = 0;
         }
 
-        // Percorre cada par de corpos uma única vez.
+        /* Percorre cada par de corpos uma única vez utilizando o (j = i + 1) para otimizar o processamento. */
         for (int i = 0; i < Corpos.Count; i++)
         {
             for (int j = i + 1; j < Corpos.Count; j++)
@@ -81,17 +81,21 @@ public class Universo
                     continue;
                 }
 
+                /* Áqui será aplicada a Lei da Gravitação Universal de Isaac Newton que é o F = G * (m1 * m2) / r² */
                 double forca = CalcularForcaGravitacional(
                     corpo1,
                     corpo2
                 );
 
+                /* Utilizaremos a decomposição vetorial da força resultante para os eixos X e Y onde utilizaremos os triângulos (seno e cosseno do ângulo) */
                 double direcaoX = deltaX / distancia;
                 double direcaoY = deltaY / distancia;
 
                 double forcaX = forca * direcaoX;
                 double forcaY = forca * direcaoY;
 
+                /* Terceira Lei de Newton (Ação e Reação) onde a força que o corpo 1 exerce sobre o corpo 2 é igual em módulo e oposta em direção á força
+                 * que o corpo 2 exerce sobre o corpo 1. */
                 corpo1.ForcaX += forcaX;
                 corpo1.ForcaY += forcaY;
 
@@ -101,14 +105,17 @@ public class Universo
         }
     }
 
-    // Atualiza velocidade e posição dos corpos em cada iteração.
+    /* Atualiza velocidade e posição dos corpos em cada iteração utilizando MRUV (Movimento Retilíneo Uniformemente Variado). */
     public void AtualizarPosicoes(double tempoEntreIteracoes)
     {
         foreach (Corpo corpo in Corpos)
         {
+
+            /* Aplica a 2ª Lei de Newton (F = m * a) isolando a aceleração (a = F / m) */
             corpo.AceleracaoX = corpo.ForcaX / corpo.Massa;
             corpo.AceleracaoY = corpo.ForcaY / corpo.Massa;
 
+            /* Equação horária da posição (s = s0 + v0*t + (a*t²)/2) */
             corpo.PosX +=
             corpo.VelX * tempoEntreIteracoes
             + (corpo.AceleracaoX / 2)
@@ -119,6 +126,7 @@ public class Universo
                 + (corpo.AceleracaoY / 2)
                 * Math.Pow(tempoEntreIteracoes, 2);
 
+            /* Equação da velocidade (v = v0 + a*t) */
             corpo.VelX +=
                 corpo.AceleracaoX * tempoEntreIteracoes;
 
@@ -199,6 +207,7 @@ public class Universo
                     double velocidadeRelativaY =
                         corpo2.VelY - corpo1.VelY;
 
+                    /* Se a velocidade relativa na normal for maior ou igual a zero, significa que os corpos estão se afastando e não é necessário tratar a colisão. */
                     double velocidadeNaNormal =
                         velocidadeRelativaX * normalX
                         + velocidadeRelativaY * normalY;
@@ -207,11 +216,13 @@ public class Universo
                         $"Velocidade relativa na normal: " +
                         $"{velocidadeNaNormal:F4}");
 
+                    /* Se a velocidade relativa é positiva, os corpos já estão se afastando e não é necessário tratar a colisão. */
                     if (velocidadeNaNormal >= 0)
                     {
                         continue;
                     }
 
+                    /* Este cálculo de impulso deriva da fórmula da conservação do momento linear em uma colisão elástica bidimensional (Q_antes = Q_depois). */
                     double impulso =
                         -(2 * velocidadeNaNormal)
                         / ((1 / corpo1.Massa) + (1 / corpo2.Massa));
@@ -219,12 +230,15 @@ public class Universo
                     double impulsoX = impulso * normalX;
                     double impulsoY = impulso * normalY;
 
+                    /* Aplica a alteração das velocidades usando J = Delta_Q (Impulso = variação do momento) */
+                    /* Portanto, isolamos a velocidade: Delta_v = J / m */
                     corpo1.VelX -= impulsoX / corpo1.Massa;
                     corpo1.VelY -= impulsoY / corpo1.Massa;
 
                     corpo2.VelX += impulsoX / corpo2.Massa;
                     corpo2.VelY += impulsoY / corpo2.Massa;
 
+                    /* Resolve a sobreposição: separa os corpos fisicamente para não ficarem "presos" */
                     double sobreposicao =
                         somaRaios - distancia;
 
@@ -241,7 +255,7 @@ public class Universo
         }
     }
 
-    // Exibe o estado atual dos corpos.
+    /* Exibe o estado atual dos corpos. */
     public void ExibirEstado()
     {
         foreach (Corpo corpo in Corpos)
