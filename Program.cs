@@ -1,8 +1,13 @@
 ﻿using System;
 using TrabalhoN1;
 
-/* Apresentar o menu de opções para o usuário, permitindo criar um novo universo ou carregar um universo salvo. */
-Console.WriteLine("SIMULADOR GRAVITACIONAL 2D");
+bool continuar = true;
+
+while (continuar)
+{
+
+    /* Apresentar o menu de opções para o usuário, permitindo criar um novo universo ou carregar um universo salvo. */
+    Console.WriteLine("SIMULADOR GRAVITACIONAL 2D");
 Console.WriteLine();
 
 Console.WriteLine("1 - Criar novo universo");
@@ -107,9 +112,20 @@ switch (opcao)
     /* Encerrar o programa. */
     case "0":
         Console.WriteLine("Programa encerrado.");
-        break;
+            continuar = false;
+            break;
 
     default:
         Console.WriteLine("Opção inválida.");
         break;
+   }
+
+    /* Aguardar o usuário pressionar ENTER para voltar ao menu, caso a opção escolhida não seja sair. */
+    if (continuar)
+    {
+        Console.WriteLine();
+        Console.WriteLine("Pressione ENTER para voltar ao menu.");
+        Console.ReadLine();
+        Console.Clear();
+    }
 }
