@@ -8,10 +8,13 @@ public class Universo
     /* Constante gravitacional utilizada no cálculo da força entre os corpos. */
     private const double G = 6.674184e-11;
 
+    /* Lista de corpos presentes no universo. */
     public List<Corpo> Corpos { get; private set; }
 
+    /* Quantidade de iterações que a simulação irá executar. */
     public int QuantidadeIteracoes { get; set; }
 
+    /* Tempo entre cada iteração da simulação, em segundos. */
     public double TempoEntreIteracoes { get; set; }
 
     /* Construtor da classe Universo. */
@@ -69,12 +72,13 @@ public class Universo
         {
             for (int j = i + 1; j < Corpos.Count; j++)
             {
-                Corpo corpo1 = Corpos[i];
-                Corpo corpo2 = Corpos[j];
+                Corpo corpo1 = Corpos[i]; /* Corpo 1 é o corpo atual da iteração externa. */
+                Corpo corpo2 = Corpos[j]; /* Corpo 2 é o corpo atual da iteração interna. */
 
-                double deltaX = corpo2.PosX - corpo1.PosX;
-                double deltaY = corpo2.PosY - corpo1.PosY;
+                double deltaX = corpo2.PosX - corpo1.PosX; /* Calcula a diferença de posição no eixo X entre os corpos. */
+                double deltaY = corpo2.PosY - corpo1.PosY; /* Calcula a diferença de posição no eixo Y entre os corpos. */
 
+                /* Calcula a distância entre os corpos. */
                 double distancia = CalcularDistancia(
                     corpo1,
                     corpo2
@@ -146,8 +150,8 @@ public class Universo
         {
             for (int j = i + 1; j < Corpos.Count; j++)
             {
-                Corpo corpo1 = Corpos[i];
-                Corpo corpo2 = Corpos[j];
+                Corpo corpo1 = Corpos[i]; /* Corpo 1 é o corpo atual da iteração externa. */
+                Corpo corpo2 = Corpos[j]; /* Corpo 2 é o corpo atual da iteração interna. */
 
                 double distancia =
                     CalcularDistancia(corpo1, corpo2);
@@ -156,6 +160,7 @@ public class Universo
                 double somaRaios =
                     corpo1.Raio + corpo2.Raio;
 
+                /* Se a distância entre os corpos for menor ou igual à soma dos raios, significa que houve colisão. */
                 if (distancia <= somaRaios)
                 {
                     Console.WriteLine(
@@ -240,10 +245,10 @@ public class Universo
 
                     /* Aplica a alteração das velocidades usando J = Delta_Q (Impulso = variação do momento) */
                     /* Portanto, isolamos a velocidade: Delta_v = J / m */
-                    corpo1.VelX -= impulsoX / corpo1.Massa;
-                    corpo1.VelY -= impulsoY / corpo1.Massa;
+                    corpo1.VelX -= impulsoX / corpo1.Massa; /* Subtrai a velocidade X do corpo 1 na direção da normal. */
+                    corpo1.VelY -= impulsoY / corpo1.Massa; 
 
-                    corpo2.VelX += impulsoX / corpo2.Massa;
+                    corpo2.VelX += impulsoX / corpo2.Massa; /* Adiciona a velocidade X do corpo 2 na direção da normal. */
                     corpo2.VelY += impulsoY / corpo2.Massa;
 
                     /* Resolve a sobreposição: separa os corpos fisicamente para não ficarem "presos". */
@@ -322,6 +327,7 @@ public class Universo
                 velY
             );
 
+            /* Adiciona o corpo gerado aleatoriamente ao universo. */
             AdicionarCorpo(corpo);
         }
     }

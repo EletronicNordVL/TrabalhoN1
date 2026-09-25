@@ -10,6 +10,7 @@ while (continuar)
     Console.WriteLine("SIMULADOR GRAVITACIONAL 2D");
 Console.WriteLine();
 
+    /* Exibir as opções do menu. */
 Console.WriteLine("1 - Criar novo universo");
 Console.WriteLine("2 - Carregar universo salvo");
 Console.WriteLine("0 - Sair");
@@ -65,7 +66,8 @@ switch (opcao)
         Console.WriteLine("Iniciando simulação...");
         Console.WriteLine();
 
-        universo.ExecutarSimulacao(
+            /* Executar a simulação do universo com base na quantidade de iterações e tempo entre iterações informados pelo usuário. */
+            universo.ExecutarSimulacao(
             universo.QuantidadeIteracoes,
             universo.TempoEntreIteracoes
         );
@@ -77,7 +79,8 @@ switch (opcao)
         GravadorArquivoTexto gravadorCarregar =
         new GravadorArquivoTexto();
 
-        Universo universoCarregado =
+            /* Carregar o universo salvo do arquivo txt. */
+            Universo universoCarregado =
             gravadorCarregar.Carregar("universo.txt");
 
         Console.WriteLine("Universo carregado com sucesso.");
