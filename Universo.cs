@@ -304,12 +304,12 @@ public class Universo
         for (int i = 0; i < quantidade; i++)
         {
             string nome = $"Corpo {i + 1}";
-            double massa = random.NextDouble() * 1000 + 100;
-            double densidade = random.NextDouble() * 1000 + 100;
-            double posX = random.NextDouble() * 100 - 50;
-            double posY = random.NextDouble() * 100 - 50;
-            double velX = random.NextDouble() * 2 - 1;
-            double velY = random.NextDouble() * 2 - 1;
+            double massa = random.NextDouble() * (1e25 - 1e22) + 1e22;      // 10^22 a 10^25 kg
+            double densidade = random.NextDouble() * (6000 - 3000) + 3000;  // 3000 a 6000 kg/m³
+            double posX = random.NextDouble() * (5e9 - (-5e9)) + (-5e9);    // ±5 bilhões de metros
+            double posY = random.NextDouble() * (5e9 - (-5e9)) + (-5e9);
+            double velX = random.NextDouble() * (200 - (-200)) + (-200);    // ±200 m/s
+            double velY = random.NextDouble() * (200 - (-200)) + (-200);
 
             Corpo corpo = new Corpo(
                 nome,

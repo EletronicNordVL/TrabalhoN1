@@ -13,7 +13,7 @@ public abstract class GravadorUniverso
 public class GravadorArquivoTexto : GravadorUniverso
 {
     public override void Salvar(Universo universo, string caminho)
-    { /* System.IO */
+    {
         using StreamWriter arquivo = new StreamWriter(caminho);
 
         arquivo.WriteLine(
@@ -38,7 +38,7 @@ public class GravadorArquivoTexto : GravadorUniverso
 
     /* Essa função lê os dados do arquivo txt e cria um objeto Universo com os corpos carregados. */
     public override Universo Carregar(string caminho)
-    { /* System.IO */
+    {
         using StreamReader arquivo = new StreamReader(caminho);
 
         string primeiraLinha = arquivo.ReadLine()!;
