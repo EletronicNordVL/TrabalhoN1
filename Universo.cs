@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 namespace TrabalhoN1;
 
+/* Essa classe representa o universo, contendo uma lista de corpos e métodos para calcular forças, atualizar posições e tratar colisões. */
 public class Universo
 {
     /* Constante gravitacional utilizada no cálculo da força entre os corpos. */
@@ -252,10 +253,10 @@ public class Universo
                     double correcao =
                         sobreposicao / 2;
 
-                    corpo1.PosX -= correcao * normalX;
-                    corpo1.PosY -= correcao * normalY;
+                    corpo1.PosX -= correcao * normalX; /* Move o corpo 1 para trás na direção da normal. */
+                    corpo1.PosY -= correcao * normalY; 
 
-                    corpo2.PosX += correcao * normalX;
+                    corpo2.PosX += correcao * normalX; /* Move o corpo 2 para frente na direção da normal. */
                     corpo2.PosY += correcao * normalY;
                 }
             }
@@ -304,11 +305,11 @@ public class Universo
         for (int i = 0; i < quantidade; i++)
         {
             string nome = $"Corpo {i + 1}";
-            double massa = random.NextDouble() * (1e25 - 1e22) + 1e22;      // 10^22 a 10^25 kg
-            double densidade = random.NextDouble() * (6000 - 3000) + 3000;  // 3000 a 6000 kg/m³
-            double posX = random.NextDouble() * (5e9 - (-5e9)) + (-5e9);    // ±5 bilhões de metros
-            double posY = random.NextDouble() * (5e9 - (-5e9)) + (-5e9);
-            double velX = random.NextDouble() * (200 - (-200)) + (-200);    // ±200 m/s
+            double massa = random.NextDouble() * (1e25 - 1e22) + 1e22;      /* 10^22 a 10^25 kg */
+            double densidade = random.NextDouble() * (6000 - 3000) + 3000;  /* 3000 a 6000 kg/m³ */
+            double posX = random.NextDouble() * (5e9 - (-5e9)) + (-5e9);    /* ±5 bilhões de metros */
+            double posY = random.NextDouble() * (5e9 - (-5e9)) + (-5e9);    
+            double velX = random.NextDouble() * (200 - (-200)) + (-200);    /* ±200 m/s */
             double velY = random.NextDouble() * (200 - (-200)) + (-200);
 
             Corpo corpo = new Corpo(

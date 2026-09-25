@@ -31,8 +31,8 @@ switch (opcao)
             int.Parse(Console.ReadLine()!);
 
         Universo universo = new Universo();
-
-        universo.GerarCorposAleatorios(quantidadeCorpos);
+            /* Gerar corpos aleatórios com base na quantidade informada pelo usuário. */
+            universo.GerarCorposAleatorios(quantidadeCorpos);
 
         Console.Write("Digite a quantidade de iterações: ");
         universo.QuantidadeIteracoes =
