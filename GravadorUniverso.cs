@@ -12,6 +12,7 @@ public abstract class GravadorUniverso
 /* Essa é a classe concreta que implementa a gravação e leitura dos dados do universo em um arquivo txt. */
 public class GravadorArquivoTexto : GravadorUniverso
 {
+    /* Essa função salva os dados do universo em um arquivo txt. */
     public override void Salvar(Universo universo, string caminho)
     {
         using StreamWriter arquivo = new StreamWriter(caminho);
@@ -45,6 +46,7 @@ public class GravadorArquivoTexto : GravadorUniverso
 
         string[] dados = primeiraLinha.Split(';');
 
+        /* Ler a quantidade de corpos, quantidade de iterações e tempo entre iterações do arquivo. */
         int quantidadeCorpos = int.Parse(dados[0]);
         int quantidadeIteracoes = int.Parse(dados[1]);
         double tempoEntreIteracoes = double.Parse(dados[2]);
