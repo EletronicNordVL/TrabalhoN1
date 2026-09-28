@@ -5,10 +5,20 @@ namespace TrabalhoN1
      * nome, massa, densidade, posição, velocidade, força e aceleração. */
     public class Corpo
     {
+
+        /* Define o máximo de densidade para evitar valores irrealistas. */
         private const double DensidadeMaxima = 1e18;
+
+        /* Campos privados para armazenar os valores das propriedades do corpo. */
         private string nome = string.Empty;
-        private double massa; 
+
+        /* A massa do corpo, em quilogramas (kg) */
+        private double massa;
+
+        /* A densidade do corpo, em quilogramas por metro cúbico (kg/m³) */
         private double densidade;
+
+        /* Propriedades públicas para acessar e modificar os valores do corpo. */
         public string Nome
         {
             get => nome;

@@ -35,6 +35,7 @@ public class Universo
         double deltaX = corpo2.PosX - corpo1.PosX;
         double deltaY = corpo2.PosY - corpo1.PosY;
 
+        /* Utiliza o Teorema de Pitágoras para calcular a distância entre os corpos. */
         return Math.Sqrt(
             deltaX * deltaX +
             deltaY * deltaY
@@ -134,10 +135,11 @@ public class Universo
                 + (corpo.AceleracaoY / 2)
                 * Math.Pow(tempoEntreIteracoes, 2);
 
-            /* Equação da velocidade (v = v0 + a*t) */
+            /* Equação da velocidade X (v = v0 + a*t) */
             corpo.VelX +=
                 corpo.AceleracaoX * tempoEntreIteracoes;
 
+            /* Equação da velocidade Y (v = v0 + a*t) */
             corpo.VelY +=
                 corpo.AceleracaoY * tempoEntreIteracoes;
         }
@@ -153,6 +155,7 @@ public class Universo
                 Corpo corpo1 = Corpos[i]; /* Corpo 1 é o corpo atual da iteração externa. */
                 Corpo corpo2 = Corpos[j]; /* Corpo 2 é o corpo atual da iteração interna. */
 
+                /* Calcula a distância entre os corpos para verificar se houve colisão. */
                 double distancia =
                     CalcularDistancia(corpo1, corpo2);
 
@@ -170,6 +173,7 @@ public class Universo
                     double normalX;
                     double normalY;
 
+                    /* Calcula a normal da colisão, que é um vetor unitário apontando da posição do corpo 1 para a posição do corpo 2. */
                     if (distancia > 0)
                     {
                         normalX =
@@ -192,6 +196,7 @@ public class Universo
                                 diferencaVelY * diferencaVelY
                             );
 
+                        /* Se a velocidade relativa for zero, define a normal como (1, 0) para evitar divisão por zero. */
                         if (moduloVelocidade == 0)
                         {
                             normalX = 1;
@@ -234,7 +239,7 @@ public class Universo
                         continue;
                     }
 
-                    /* CONSERVAÇÃO DA QUANTIDADE DE MOVIMENTO (Q = m * v) */
+                    /* Conservação da Quantidade de Movimento (Q = m * v) */
                     /* Este cálculo de impulso deriva da fórmula da conservação do momento linear em uma colisão elástica bidimensional (Q_antes = Q_depois). */
                     double impulso =
                         -(2 * velocidadeNaNormal)
@@ -287,6 +292,7 @@ public class Universo
     {
         for (int i = 1; i <= iteracoes; i++)
         {
+            /* Calcula as forças gravitacionais entre os corpos. */
             CalcularForcas();
 
             AtualizarPosicoes(tempoEntreIteracoes);
@@ -309,6 +315,7 @@ public class Universo
         /* Gera corpos com propriedades aleatórias dentro de intervalos definidos. */
         for (int i = 0; i < quantidade; i++)
         {
+            /* Gera um nome único para cada corpo. */
             string nome = $"Corpo {i + 1}";
             double massa = random.NextDouble() * (1e25 - 1e22) + 1e22;      /* 10^22 a 10^25 kg */
             double densidade = random.NextDouble() * (6000 - 3000) + 3000;  /* 3000 a 6000 kg/m³ */
@@ -317,6 +324,7 @@ public class Universo
             double velX = random.NextDouble() * (200 - (-200)) + (-200);    /* ±200 m/s */
             double velY = random.NextDouble() * (200 - (-200)) + (-200);
 
+            /* Cria um novo corpo com as propriedades geradas aleatoriamente. */
             Corpo corpo = new Corpo(
                 nome,
                 massa,

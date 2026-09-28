@@ -23,6 +23,7 @@ public class GravadorArquivoTexto : GravadorUniverso
             $"{universo.TempoEntreIteracoes}"
         );
 
+        /* Salvar os dados de cada corpo no arquivo. */
         foreach (Corpo corpo in universo.Corpos)
         {
             arquivo.WriteLine(
@@ -71,6 +72,7 @@ public class GravadorArquivoTexto : GravadorUniverso
             double velX = double.Parse(dadosCorpo[5]);
             double velY = double.Parse(dadosCorpo[6]);
 
+            /* Criar um novo corpo com os dados lidos do arquivo e adicioná-lo ao universo. */
             Corpo corpo = new Corpo(
                 nome,
                 massa,
@@ -81,6 +83,7 @@ public class GravadorArquivoTexto : GravadorUniverso
                 velY
             );
 
+            /* Adicionar o corpo ao universo. */
             universo.AdicionarCorpo(corpo);
         }
 

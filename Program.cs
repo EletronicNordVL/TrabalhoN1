@@ -14,7 +14,8 @@ while (continuar)
     /* Exibir as opções do menu. */
     Console.WriteLine("1 - Criar novo universo");
     Console.WriteLine("2 - Carregar universo salvo");
-    Console.WriteLine("0 - Sair");
+    Console.WriteLine("3 - Apagar universo salvo");
+    Console.WriteLine("0 - Sair do menu");
 
     Console.WriteLine();
     Console.Write("Escolha uma opção: ");
@@ -30,9 +31,10 @@ while (continuar)
     /* Executar a opção escolhida pelo usuário. */
     switch (opcao)
     {
+        /* Criar um novo universo com base na quantidade de corpos, iterações e tempo entre iterações informados pelo usuário. */
         case "1":
 
-            Console.WriteLine("CRIAR NOVO UNIVERSO");
+            Console.WriteLine("Criar novo universo");
             Console.WriteLine();
 
             Console.Write("Digite a quantidade de corpos: ");
@@ -96,6 +98,7 @@ while (continuar)
                 $"Configuração inicial salva em {caminhoArquivo}."
             );
 
+            /* Serve para aguardar o usuário pressionar ENTER antes de iniciar a simulação. */
             Console.WriteLine();
             Console.WriteLine("Iniciando simulação...");
             Console.WriteLine();
@@ -112,7 +115,7 @@ while (continuar)
         /* Carregar um universo salvo de um arquivo txt e continuar a simulação. */
         case "2":
 
-            Console.WriteLine("CARREGAR UNIVERSO SALVO");
+            Console.WriteLine("Carregar universo salvo");
             Console.WriteLine();
 
             /* Buscar todos os arquivos de universos salvos. */
@@ -180,7 +183,7 @@ while (continuar)
                     arquivoEscolhido
                 );
 
-            Console.WriteLine("UNIVERSO CARREGADO");
+            Console.WriteLine("Universo carregado");
             Console.WriteLine();
 
             Console.WriteLine(
@@ -218,6 +221,74 @@ while (continuar)
 
             break;
 
+        /* Apagar um universo salvo de um arquivo txt. */
+        case "3":
+
+            Console.WriteLine("Apagar universo salvo");
+            Console.WriteLine();
+
+            /* Aqui serve para buscar todos os arquivos de universos salvos. */
+            string[] universosParaDeletar =
+                Directory.GetFiles(
+                    ".",
+                    "universo_*.txt"
+                );
+
+            /* Verificar se existem universos salvos. */
+            if (universosParaDeletar.Length == 0)
+            {
+                Console.WriteLine(
+                    "Nenhum universo salvo foi encontrado no sistema."
+                );
+
+                break;
+            }
+
+            /* Exibir os universos salvos para o usuário escolher qual apagar. */
+            for (int i = 0; i < universosParaDeletar.Length; i++)
+            {
+                Console.WriteLine(
+                    $"{i + 1} - {Path.GetFileName(universosParaDeletar[i])}"
+                );
+            }
+
+            Console.WriteLine("0 - Voltar");
+
+            Console.WriteLine();
+            Console.Write("Escolha um universo para apagar: ");
+
+            int escolhaApagar =
+                int.Parse(Console.ReadLine()!);
+
+            /* Voltar ao menu principal caso o usuário escolha a opção 0. */
+            if (escolhaApagar == 0)
+            {
+                aguardarEnter = false;
+                Console.Clear();
+                break;
+            }
+
+            /* Verificar se a opção escolhida existe na lista. */
+            if (escolhaApagar < 1 ||
+                escolhaApagar > universosParaDeletar.Length)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Opção inválida.");
+                break;
+            }
+
+            string arquivoDeletar =
+                universosParaDeletar[escolhaApagar - 1];
+
+            /* Excluir o arquivo selecionado no disco. */
+            File.Delete(arquivoDeletar);
+
+            Console.WriteLine();
+            Console.WriteLine(
+                $"Arquivo {Path.GetFileName(arquivoDeletar)} apagado com sucesso."
+            );
+
+            break;
 
         /* Encerrar o programa. */
         case "0":
