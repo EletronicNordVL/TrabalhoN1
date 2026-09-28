@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using TrabalhoN1;
 
+/* Programa principal que apresenta um menu para o usuário criar, carregar ou apagar universos gravacionais 2D. */
 bool continuar = true;
 
 while (continuar)
@@ -17,6 +18,7 @@ while (continuar)
     Console.WriteLine("3 - Apagar universo salvo");
     Console.WriteLine("0 - Sair do menu");
 
+    /* Solicitar ao usuário que escolha uma opção do menu. */
     Console.WriteLine();
     Console.Write("Escolha uma opção: ");
 
@@ -37,8 +39,10 @@ while (continuar)
             Console.WriteLine("Criar novo universo");
             Console.WriteLine();
 
+            /* Solicitar ao usuário que informe a quantidade de corpos que deseja gerar no universo. */
             Console.Write("Digite a quantidade de corpos: ");
 
+            /* Ler a entrada do usuário e armazenar a quantidade de corpos informada. */
             int quantidadeCorpos;
             string? entradaCorpos = Console.ReadLine();
 
@@ -61,6 +65,7 @@ while (continuar)
                         break;
                     }
 
+                    /* Verificar se a quantidade de corpos informada é válida. */
                     if (int.TryParse(
                             entradaCorpos,
                             out quantidadeCorpos)
@@ -110,6 +115,7 @@ while (continuar)
                         break;
                     }
 
+                    /* Verificar se a quantidade de iterações informada é válida. */
                     if (int.TryParse(
                             entradaIteracoes,
                             out quantidadeIteracoes)
@@ -128,6 +134,7 @@ while (continuar)
                 break;
             }
 
+            /* Atribuir a quantidade de iterações informada pelo usuário ao universo criado. */
             universo.QuantidadeIteracoes =
                 quantidadeIteracoes;
 
@@ -137,6 +144,7 @@ while (continuar)
 
             double tempoEntreIteracoes = 0;
 
+            /* Ler a entrada do usuário e substituir vírgulas por pontos para permitir a entrada de números decimais. */
             string? entradaTempo =
                 Console.ReadLine()?.Replace(',', '.');
 
@@ -150,6 +158,7 @@ while (continuar)
                 )
                 && tempoEntreIteracoes > 0;
 
+            /* Caso o tempo informado seja inválido, solicitar ao usuário que informe um valor válido ou 0 para voltar ao menu principal. */
             if (!tempoValido)
             {
                 while (true)
@@ -158,6 +167,7 @@ while (continuar)
                         "Valor inválido. Digite um tempo válido ou 0 para voltar: "
                     );
 
+                    /* Ler a entrada do usuário e substituir vírgulas por pontos para permitir a entrada de números decimais. */
                     entradaTempo =
                         Console.ReadLine()?.Replace(',', '.');
 
@@ -168,6 +178,7 @@ while (continuar)
                         break;
                     }
 
+                    /* Verificar se o tempo entre as iterações informado é válido. */
                     tempoValido =
                         double.TryParse(
                             entradaTempo,
@@ -177,6 +188,7 @@ while (continuar)
                         )
                         && tempoEntreIteracoes > 0;
 
+                    /* Caso o tempo informado seja válido, sair do loop. */
                     if (tempoValido)
                     {
                         break;
@@ -192,6 +204,7 @@ while (continuar)
                 break;
             }
 
+            /* Atribuir o tempo entre as iterações informado pelo usuário ao universo criado. */
             universo.TempoEntreIteracoes =
                 tempoEntreIteracoes;
 
@@ -199,15 +212,16 @@ while (continuar)
             Console.WriteLine("Corpos gerados:");
             Console.WriteLine();
 
+            /* Exibir o estado inicial do universo criado, mostrando os corpos gerados e suas propriedades. */
             universo.ExibirEstado();
 
+            /* Criar um gravador de arquivo de texto para salvar o universo criado em um arquivo txt. */
             GravadorArquivoTexto gravador =
                 new GravadorArquivoTexto();
 
             /* Gerar um nome de arquivo diferente para cada universo salvo, evitando sobrescrever os anteriores. */
             int numeroArquivo = 1;
             string caminhoArquivo;
-
             do
             {
                 caminhoArquivo =
@@ -217,6 +231,7 @@ while (continuar)
             }
             while (File.Exists(caminhoArquivo));
 
+            /* Salvar o universo criado em um arquivo txt com o nome gerado. */
             gravador.Salvar(
                 universo,
                 caminhoArquivo
@@ -224,6 +239,7 @@ while (continuar)
 
             Console.WriteLine();
 
+            /* Exibir uma mensagem informando que a configuração inicial do universo foi salva com sucesso. */
             Console.WriteLine(
                 $"Configuração inicial salva em {caminhoArquivo}."
             );
@@ -240,7 +256,6 @@ while (continuar)
             );
 
             break;
-
 
         /* Carregar um universo salvo de um arquivo txt e continuar a simulação. */
         case "2":
@@ -275,6 +290,7 @@ while (continuar)
 
             Console.WriteLine("0 - Voltar");
 
+            /* Solicitar ao usuário que escolha um universo para carregar. */
             Console.WriteLine();
             Console.Write("Escolha um universo: ");
 
@@ -312,6 +328,7 @@ while (continuar)
             /* Limpar a tela antes de exibir o universo escolhido. */
             Console.Clear();
 
+            /*  Criar um gravador de arquivo de texto para carregar o universo salvo. */
             GravadorArquivoTexto gravadorCarregar =
                 new GravadorArquivoTexto();
 
@@ -321,23 +338,28 @@ while (continuar)
                     arquivoEscolhido
                 );
 
+            /* Exibir uma mensagem informando que o universo foi carregado com sucesso. */
             Console.WriteLine("Universo carregado");
             Console.WriteLine();
 
+            /* Exibir informações sobre o universo carregado, como o nome do arquivo, quantidade de corpos, iterações e tempo entre iterações. */
             Console.WriteLine(
                 $"Arquivo: {Path.GetFileName(arquivoEscolhido)}"
             );
 
             Console.WriteLine();
 
+            /* Exibir a quantidade de corpos, iterações e tempo entre iterações do universo carregado. */
             Console.WriteLine(
                 $"Quantidade de corpos: {universoCarregado.Corpos.Count}"
             );
 
+            /* Exibir a quantidade de iterações e o tempo entre iterações do universo carregado. */
             Console.WriteLine(
                 $"Quantidade de iterações: {universoCarregado.QuantidadeIteracoes}"
             );
 
+            /* Exibir o tempo entre iterações do universo carregado. */
             Console.WriteLine(
                 $"Tempo entre iterações: {universoCarregado.TempoEntreIteracoes}"
             );
@@ -346,6 +368,7 @@ while (continuar)
             Console.WriteLine("Corpos carregados:");
             Console.WriteLine();
 
+            /* Exibir o estado inicial do universo carregado, mostrando os corpos e suas propriedades. */
             universoCarregado.ExibirEstado();
 
             Console.WriteLine();
@@ -358,7 +381,6 @@ while (continuar)
             );
 
             break;
-
 
         /* Apagar um universo salvo de um arquivo txt. */
         case "3":
@@ -391,6 +413,7 @@ while (continuar)
                 );
             }
 
+            /* Exibir a opção de voltar ao menu principal. */
             Console.WriteLine("0 - Voltar");
 
             Console.WriteLine();
@@ -424,6 +447,7 @@ while (continuar)
                 break;
             }
 
+            /* Obter o caminho do arquivo selecionado para deletar. */
             string arquivoDeletar =
                 universosParaDeletar[escolhaApagar - 1];
 
@@ -447,7 +471,6 @@ while (continuar)
             aguardarEnter = false;
 
             break;
-
 
         default:
 
