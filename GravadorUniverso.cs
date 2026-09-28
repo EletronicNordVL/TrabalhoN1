@@ -5,7 +5,9 @@ namespace TrabalhoN1;
 /* Essa é a classe abstrata para gravar os dados do universo em um arquivo txt. */
 public abstract class GravadorUniverso
 {
+    /* Essa função salva os dados do universo em um arquivo txt. */
     public abstract void Salvar(Universo universo, string caminho);
+    /* Essa função tem a função de ler os dados do arquivo txt e cria um objeto Universo com os corpos carregados. */
     public abstract Universo Carregar(string caminho);
 }
 
@@ -41,10 +43,13 @@ public class GravadorArquivoTexto : GravadorUniverso
     /* Essa função lê os dados do arquivo txt e cria um objeto Universo com os corpos carregados. */
     public override Universo Carregar(string caminho)
     {
+        /* Abrir o arquivo para leitura. */
         using StreamReader arquivo = new StreamReader(caminho);
 
+        /* Ler a primeira linha do arquivo, que contém a quantidade de corpos, quantidade de iterações e tempo entre iterações. */
         string primeiraLinha = arquivo.ReadLine()!;
 
+        /* Separar os dados da primeira linha em um array de strings. */
         string[] dados = primeiraLinha.Split(';');
 
         /* Ler a quantidade de corpos, quantidade de iterações e tempo entre iterações do arquivo. */
@@ -54,6 +59,7 @@ public class GravadorArquivoTexto : GravadorUniverso
 
         Universo universo = new Universo();
 
+        /* Atribuir a quantidade de iterações e o tempo entre iterações ao objeto */
         universo.QuantidadeIteracoes = quantidadeIteracoes;
         universo.TempoEntreIteracoes = tempoEntreIteracoes;
 
@@ -64,6 +70,7 @@ public class GravadorArquivoTexto : GravadorUniverso
 
             string[] dadosCorpo = linhaCorpo.Split(';');
 
+            /* Ler os dados do corpo do arquivo. */
             string nome = dadosCorpo[0];
             double massa = double.Parse(dadosCorpo[1]);
             double densidade = double.Parse(dadosCorpo[2]);

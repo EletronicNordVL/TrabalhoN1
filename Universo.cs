@@ -47,6 +47,7 @@ public class Universo
         Corpo corpo1,
         Corpo corpo2)
     {
+        /* Calcula a distância entre os corpos para utilizar na fórmula da força gravitacional. */
         double distancia = CalcularDistancia(corpo1, corpo2);
 
         if (distancia == 0)
@@ -54,6 +55,7 @@ public class Universo
             return 0;
         }
 
+        /* Aplica a Lei da Gravitação Universal de Isaac Newton: F = G * (m1 * m2) / r² */
         return G * corpo1.Massa * corpo2.Massa
                / (distancia * distancia);
     }
@@ -176,6 +178,7 @@ public class Universo
                     /* Calcula a normal da colisão, que é um vetor unitário apontando da posição do corpo 1 para a posição do corpo 2. */
                     if (distancia > 0)
                     {
+                        /* Normaliza a diferença de posição para obter a direção da normal da colisão. */
                         normalX =
                             (corpo2.PosX - corpo1.PosX) / distancia;
 
@@ -184,12 +187,14 @@ public class Universo
                     }
                     else
                     {
+                        /* Se a distância for zero, significa que os corpos estão exatamente na mesma posição. */
                         double diferencaVelX =
                             corpo1.VelX - corpo2.VelX;
 
                         double diferencaVelY =
                             corpo1.VelY - corpo2.VelY;
 
+                        /* Calcula o módulo da velocidade relativa entre os corpos. */
                         double moduloVelocidade =
                             Math.Sqrt(
                                 diferencaVelX * diferencaVelX +
@@ -204,6 +209,7 @@ public class Universo
                         }
                         else
                         {
+                            /* Normaliza a diferença de velocidade para obter a direção da normal da colisão. */
                             normalX =
                                 diferencaVelX / moduloVelocidade;
 
@@ -230,6 +236,7 @@ public class Universo
                         velocidadeRelativaX * normalX
                         + velocidadeRelativaY * normalY;
 
+                    /* Exibe a velocidade relativa na direção da normal da colisão. */
                     Console.WriteLine(
                         $"Velocidade relativa na normal: " +
                         $"{velocidadeNaNormal:F4}");
@@ -281,6 +288,7 @@ public class Universo
     {
         foreach (Corpo corpo in Corpos)
         {
+            /* Exibe o nome, posição e velocidade de cada corpo com quatro casas decimais. */
             Console.WriteLine(
                 $"{corpo.Nome} - " +
                 $"Posição: ({corpo.PosX:F4}, {corpo.PosY:F4}) - " +
@@ -298,12 +306,16 @@ public class Universo
             /* Calcula as forças gravitacionais entre os corpos. */
             CalcularForcas();
 
+            /* Atualiza as posições e velocidades dos corpos com base nas forças calculadas. */
             AtualizarPosicoes(tempoEntreIteracoes);
 
+            /* Trata colisões entre os corpos, ajustando suas velocidades e posições conforme necessário. */
             TratarColisoes();
 
+            /* Exibe o estado atual dos corpos após cada iteração. */
             Console.WriteLine($"Iteração {i}");
 
+            /* Exibe o estado atual dos corpos após cada iteração. */
             ExibirEstado();
 
             Console.WriteLine();

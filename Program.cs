@@ -22,6 +22,7 @@ while (continuar)
     Console.WriteLine();
     Console.Write("Escolha uma opção: ");
 
+    /* Ler a entrada do usuário e armazenar a opção escolhida. */
     string? opcao = Console.ReadLine();
 
     /* Limpar a tela após o usuário escolher uma opção do menu. */
@@ -138,10 +139,12 @@ while (continuar)
             universo.QuantidadeIteracoes =
                 quantidadeIteracoes;
 
+            /* Solicitar ao usuário que informe o tempo entre as iterações do universo. */
             Console.Write(
                 "Digite o tempo entre as iterações (em segundos): "
             );
 
+            /* Inicializar a variável que armazenará o tempo entre as iterações. */
             double tempoEntreIteracoes = 0;
 
             /* Ler a entrada do usuário e substituir vírgulas por pontos para permitir a entrada de números decimais. */
@@ -208,6 +211,7 @@ while (continuar)
             universo.TempoEntreIteracoes =
                 tempoEntreIteracoes;
 
+            /* Exibir uma mensagem informando que o universo foi criado com sucesso. */
             Console.WriteLine();
             Console.WriteLine("Corpos gerados:");
             Console.WriteLine();
@@ -223,12 +227,14 @@ while (continuar)
             int numeroArquivo = 1;
             string caminhoArquivo;
             do
+            /* Gerar o nome do arquivo com base no número do arquivo, incrementando o número a cada iteração. */
             {
                 caminhoArquivo =
                     $"universo_{numeroArquivo}.txt";
 
                 numeroArquivo++;
             }
+            /* Verificar se o arquivo já existe, caso exista, gerar um novo nome de arquivo. */
             while (File.Exists(caminhoArquivo));
 
             /* Salvar o universo criado em um arquivo txt com o nome gerado. */
@@ -260,6 +266,7 @@ while (continuar)
         /* Carregar um universo salvo de um arquivo txt e continuar a simulação. */
         case "2":
 
+            /* Exibir uma mensagem informando que o usuário escolheu carregar um universo salvo. */
             Console.WriteLine("Carregar universo salvo");
             Console.WriteLine();
 
@@ -283,6 +290,7 @@ while (continuar)
             /* Exibir os universos salvos para o usuário escolher. */
             for (int i = 0; i < universosSalvos.Length; i++)
             {
+                /* Exibir o número do universo e o nome do arquivo correspondente. */
                 Console.WriteLine(
                     $"{i + 1} - {Path.GetFileName(universosSalvos[i])}"
                 );
@@ -294,8 +302,10 @@ while (continuar)
             Console.WriteLine();
             Console.Write("Escolha um universo: ");
 
+            /* Inicializar a variável que armazenará a escolha do usuário. */
             int escolhaUniverso;
 
+            /* Verificar se a entrada do usuário é um número válido, caso contrário, solicitar novamente. */
             while (!int.TryParse(
                        Console.ReadLine(),
                        out escolhaUniverso))
@@ -322,6 +332,7 @@ while (continuar)
                 break;
             }
 
+            /*  Obter o caminho do arquivo do universo escolhido pelo usuário. */
             string arquivoEscolhido =
                 universosSalvos[escolhaUniverso - 1];
 
@@ -375,6 +386,7 @@ while (continuar)
             Console.WriteLine("Continuando simulação...");
             Console.WriteLine();
 
+            /* Executar a simulação do universo carregado com base na quantidade de iterações e tempo entre iterações informados no arquivo. */
             universoCarregado.ExecutarSimulacao(
                 universoCarregado.QuantidadeIteracoes,
                 universoCarregado.TempoEntreIteracoes
