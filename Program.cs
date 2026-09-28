@@ -252,7 +252,6 @@ while (continuar)
                 );
             }
 
-            Console.WriteLine("T - Apagar TODOS os universos salvos");
             Console.WriteLine("0 - Voltar");
 
             Console.WriteLine();
