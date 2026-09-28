@@ -218,6 +218,7 @@ public class Universo
                         $"Normal da colisão: " +
                         $"({normalX:F4}, {normalY:F4})");
 
+                    /* Calcula a velocidade relativa entre os corpos na direção da normal da colisão. */
                     double velocidadeRelativaX =
                         corpo2.VelX - corpo1.VelX;
 
@@ -245,6 +246,7 @@ public class Universo
                         -(2 * velocidadeNaNormal)
                         / ((1 / corpo1.Massa) + (1 / corpo2.Massa));
 
+                    /* Calcula o impulso nas direções X e Y usando a normal da colisão. */
                     double impulsoX = impulso * normalX;
                     double impulsoY = impulso * normalY;
 
@@ -260,6 +262,7 @@ public class Universo
                     double sobreposicao =
                         somaRaios - distancia;
 
+                    /* Divide a sobreposição igualmente entre os dois corpos para movê-los para fora da colisão. */
                     double correcao =
                         sobreposicao / 2;
 
