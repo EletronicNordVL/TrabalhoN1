@@ -39,8 +39,45 @@ while (continuar)
 
             Console.Write("Digite a quantidade de corpos: ");
 
-            int quantidadeCorpos =
-                int.Parse(Console.ReadLine()!);
+            int quantidadeCorpos;
+            string? entradaCorpos = Console.ReadLine();
+
+            /* Verificar se a quantidade de corpos informada é válida. */
+            if (!int.TryParse(entradaCorpos, out quantidadeCorpos)
+                || quantidadeCorpos <= 0)
+            {
+                while (true)
+                {
+                    Console.Write(
+                        "Valor inválido. Digite um número válido ou 0 para voltar: "
+                    );
+
+                    entradaCorpos = Console.ReadLine();
+
+                    /* Voltar ao menu principal caso o usuário escolha a opção 0 após informar um valor inválido. */
+                    if (entradaCorpos == "0")
+                    {
+                        quantidadeCorpos = 0;
+                        break;
+                    }
+
+                    if (int.TryParse(
+                            entradaCorpos,
+                            out quantidadeCorpos)
+                        && quantidadeCorpos > 0)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            /* Voltar ao menu principal caso o usuário escolha a opção 0 após informar um valor inválido. */
+            if (quantidadeCorpos == 0)
+            {
+                aguardarEnter = false;
+                Console.Clear();
+                break;
+            }
 
             Universo universo = new Universo();
 
@@ -49,21 +86,114 @@ while (continuar)
 
             Console.Write("Digite a quantidade de iterações: ");
 
+            int quantidadeIteracoes;
+            string? entradaIteracoes = Console.ReadLine();
+
+            /* Verificar se a quantidade de iterações informada é válida. */
+            if (!int.TryParse(
+                    entradaIteracoes,
+                    out quantidadeIteracoes)
+                || quantidadeIteracoes <= 0)
+            {
+                while (true)
+                {
+                    Console.Write(
+                        "Valor inválido. Digite um número válido ou 0 para voltar: "
+                    );
+
+                    entradaIteracoes = Console.ReadLine();
+
+                    /* Voltar ao menu principal caso o usuário escolha a opção 0 após informar um valor inválido. */
+                    if (entradaIteracoes == "0")
+                    {
+                        quantidadeIteracoes = 0;
+                        break;
+                    }
+
+                    if (int.TryParse(
+                            entradaIteracoes,
+                            out quantidadeIteracoes)
+                        && quantidadeIteracoes > 0)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            /* Voltar ao menu principal caso o usuário escolha a opção 0 após informar um valor inválido. */
+            if (quantidadeIteracoes == 0)
+            {
+                aguardarEnter = false;
+                Console.Clear();
+                break;
+            }
+
             universo.QuantidadeIteracoes =
-                int.Parse(Console.ReadLine()!);
+                quantidadeIteracoes;
 
             Console.Write(
                 "Digite o tempo entre as iterações (em segundos): "
             );
 
-            string entradaTempo =
-                Console.ReadLine()!.Replace(',', '.');
+            double tempoEntreIteracoes = 0;
+
+            string? entradaTempo =
+                Console.ReadLine()?.Replace(',', '.');
+
+            /* Verificar se o tempo entre as iterações informado é válido. */
+            bool tempoValido =
+                double.TryParse(
+                    entradaTempo,
+                    NumberStyles.Float,
+                    CultureInfo.InvariantCulture,
+                    out tempoEntreIteracoes
+                )
+                && tempoEntreIteracoes > 0;
+
+            if (!tempoValido)
+            {
+                while (true)
+                {
+                    Console.Write(
+                        "Valor inválido. Digite um tempo válido ou 0 para voltar: "
+                    );
+
+                    entradaTempo =
+                        Console.ReadLine()?.Replace(',', '.');
+
+                    /* Voltar ao menu principal caso o usuário escolha a opção 0 após informar um valor inválido. */
+                    if (entradaTempo == "0")
+                    {
+                        tempoEntreIteracoes = 0;
+                        break;
+                    }
+
+                    tempoValido =
+                        double.TryParse(
+                            entradaTempo,
+                            NumberStyles.Float,
+                            CultureInfo.InvariantCulture,
+                            out tempoEntreIteracoes
+                        )
+                        && tempoEntreIteracoes > 0;
+
+                    if (tempoValido)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            /* Voltar ao menu principal caso o usuário escolha a opção 0 após informar um valor inválido. */
+            if (tempoEntreIteracoes == 0)
+            {
+                aguardarEnter = false;
+                Console.Clear();
+                break;
+            }
 
             universo.TempoEntreIteracoes =
-                double.Parse(
-                    entradaTempo,
-                    CultureInfo.InvariantCulture
-                );
+                tempoEntreIteracoes;
 
             Console.WriteLine();
             Console.WriteLine("Corpos gerados:");
@@ -148,8 +278,16 @@ while (continuar)
             Console.WriteLine();
             Console.Write("Escolha um universo: ");
 
-            int escolhaUniverso =
-                int.Parse(Console.ReadLine()!);
+            int escolhaUniverso;
+
+            while (!int.TryParse(
+                       Console.ReadLine(),
+                       out escolhaUniverso))
+            {
+                Console.Write(
+                    "Valor inválido. Escolha um universo ou 0 para voltar: "
+                );
+            }
 
             /* Voltar ao menu principal caso o usuário escolha a opção 0. */
             if (escolhaUniverso == 0)
@@ -221,6 +359,7 @@ while (continuar)
 
             break;
 
+
         /* Apagar um universo salvo de um arquivo txt. */
         case "3":
 
@@ -257,8 +396,16 @@ while (continuar)
             Console.WriteLine();
             Console.Write("Escolha um universo para apagar: ");
 
-            int escolhaApagar =
-                int.Parse(Console.ReadLine()!);
+            int escolhaApagar;
+
+            while (!int.TryParse(
+                       Console.ReadLine(),
+                       out escolhaApagar))
+            {
+                Console.Write(
+                    "Valor inválido. Escolha um universo para apagar ou 0 para voltar: "
+                );
+            }
 
             /* Voltar ao menu principal caso o usuário escolha a opção 0. */
             if (escolhaApagar == 0)
@@ -289,6 +436,7 @@ while (continuar)
             );
 
             break;
+
 
         /* Encerrar o programa. */
         case "0":
