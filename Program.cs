@@ -51,6 +51,7 @@ while (continuar)
             if (!int.TryParse(entradaCorpos, out quantidadeCorpos)
                 || quantidadeCorpos <= 0)
             {
+                /* Caso a quantidade de corpos informada seja inválida, solicitar ao usuário que informe um valor válido ou 0 para voltar ao menu principal. */
                 while (true)
                 {
                     Console.Write(
