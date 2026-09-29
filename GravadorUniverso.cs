@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Globalization;
 namespace TrabalhoN1;
 
 /* Essa é a classe abstrata para gravar os dados do universo em um arquivo txt. */
@@ -20,7 +21,7 @@ public class GravadorArquivoTexto : GravadorUniverso
         arquivo.WriteLine(
             $"{universo.Corpos.Count};" +
             $"{universo.QuantidadeIteracoes};" +
-            $"{universo.TempoEntreIteracoes}"
+            universo.TempoEntreIteracoes.ToString("R", CultureInfo.InvariantCulture)
         );
 
         /* Salvar os dados de cada corpo no arquivo. */
@@ -28,12 +29,12 @@ public class GravadorArquivoTexto : GravadorUniverso
         {
             arquivo.WriteLine(
                 $"{corpo.Nome};" +
-                $"{corpo.Massa};" +
-                $"{corpo.Densidade};" +
-                $"{corpo.PosX};" +
-                $"{corpo.PosY};" +
-                $"{corpo.VelX};" +
-                $"{corpo.VelY}"
+                corpo.Massa.ToString("R", CultureInfo.InvariantCulture) + ";" +
+                corpo.Densidade.ToString("R", CultureInfo.InvariantCulture) + ";" +
+                corpo.PosX.ToString("R", CultureInfo.InvariantCulture) + ";" +
+                corpo.PosY.ToString("R", CultureInfo.InvariantCulture) + ";" +
+                corpo.VelX.ToString("R", CultureInfo.InvariantCulture) + ";" +
+                corpo.VelY.ToString("R", CultureInfo.InvariantCulture)
             );
         }
     }
@@ -50,7 +51,7 @@ public class GravadorArquivoTexto : GravadorUniverso
         /* Ler a quantidade de corpos, quantidade de iterações e tempo entre iterações do arquivo. */
         int quantidadeCorpos = int.Parse(dados[0]);
         int quantidadeIteracoes = int.Parse(dados[1]);
-        double tempoEntreIteracoes = double.Parse(dados[2]);
+        double tempoEntreIteracoes = LerNumero(dados[2]);
 
         Universo universo = new Universo();
 
@@ -65,12 +66,12 @@ public class GravadorArquivoTexto : GravadorUniverso
             string[] dadosCorpo = linhaCorpo.Split(';');
 
             string nome = dadosCorpo[0];
-            double massa = double.Parse(dadosCorpo[1]);
-            double densidade = double.Parse(dadosCorpo[2]);
-            double posX = double.Parse(dadosCorpo[3]);
-            double posY = double.Parse(dadosCorpo[4]);
-            double velX = double.Parse(dadosCorpo[5]);
-            double velY = double.Parse(dadosCorpo[6]);
+            double massa = LerNumero(dadosCorpo[1]);
+            double densidade = LerNumero(dadosCorpo[2]);
+            double posX = LerNumero(dadosCorpo[3]);
+            double posY = LerNumero(dadosCorpo[4]);
+            double velX = LerNumero(dadosCorpo[5]);
+            double velY = LerNumero(dadosCorpo[6]);
 
             /* Criar um novo corpo com os dados lidos do arquivo e adicioná-lo ao universo. */
             Corpo corpo = new Corpo(
@@ -88,5 +89,11 @@ public class GravadorArquivoTexto : GravadorUniverso
         }
 
         return universo;
+    }
+
+    /* Lê tanto arquivos antigos com vírgula quanto arquivos invariantes da interface. */
+    private static double LerNumero(string valor)
+    {
+        return double.Parse(valor.Trim().Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture);
     }
 }
