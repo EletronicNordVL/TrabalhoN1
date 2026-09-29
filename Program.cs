@@ -37,7 +37,6 @@ while (continuar)
     {
         /* Criar um novo universo com base na quantidade de corpos, iterações e tempo entre iterações informados pelo usuário. */
         case "1":
-
             Console.WriteLine("Criar novo universo");
             Console.WriteLine();
 

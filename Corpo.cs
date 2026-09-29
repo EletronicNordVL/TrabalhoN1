@@ -24,6 +24,7 @@ namespace TrabalhoN1
             get => nome;
             set
             {
+                /* Valida se o nome fornecido é nulo, vazio ou contém apenas espaços em branco. */
                 if (string.IsNullOrWhiteSpace(value))
                     throw new ArgumentException(
                         "O nome do corpo não pode ser vazio.");

@@ -7,6 +7,7 @@ public abstract class GravadorUniverso
 {
     /* Essa função salva os dados do universo em um arquivo txt. */
     public abstract void Salvar(Universo universo, string caminho);
+
     /* Essa função tem a função de ler os dados do arquivo txt e cria um objeto Universo com os corpos carregados. */
     public abstract Universo Carregar(string caminho);
 }

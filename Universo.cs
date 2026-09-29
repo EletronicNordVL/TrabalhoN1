@@ -173,10 +173,10 @@ public class Universo
                         $"Colisão detectada entre " +
                         $"{corpo1.Nome} e {corpo2.Nome}");
 
+                    /* Calcula a normal da colisão, que é um vetor unitário apontando da posição do corpo 1 para a posição do corpo 2. */
                     double normalX;
                     double normalY;
 
-                    /* Calcula a normal da colisão, que é um vetor unitário apontando da posição do corpo 1 para a posição do corpo 2. */
                     if (distancia > 0)
                     {
                         /* Normaliza a diferença de posição para obter a direção da normal da colisão. */
