@@ -15,13 +15,15 @@ while (continuar)
     /* Exibir as opções do menu. */
     Console.WriteLine("1 - Criar novo universo");
     Console.WriteLine("2 - Carregar universo salvo");
-    Console.WriteLine("3 - Apagar universo salvo");
+    Console.WriteLine("3 - Selecionar e apagar algum universo salvo");
+    Console.WriteLine("4 - Apagar todos os universos salvos");
     Console.WriteLine("0 - Sair do menu");
 
     /* Solicitar ao usuário que escolha uma opção do menu. */
     Console.WriteLine();
     Console.Write("Escolha uma opção: ");
 
+    /* Ler a entrada do usuário e armazenar a opção escolhida. */
     string? opcao = Console.ReadLine();
 
     /* Limpar a tela após o usuário escolher uma opção do menu. */
@@ -35,7 +37,6 @@ while (continuar)
     {
         /* Criar um novo universo com base na quantidade de corpos, iterações e tempo entre iterações informados pelo usuário. */
         case "1":
-
             Console.WriteLine("Criar novo universo");
             Console.WriteLine();
 
@@ -50,12 +51,14 @@ while (continuar)
             if (!int.TryParse(entradaCorpos, out quantidadeCorpos)
                 || quantidadeCorpos <= 0)
             {
+                /* Caso a quantidade de corpos informada seja inválida, solicitar ao usuário que informe um valor válido ou 0 para voltar ao menu principal. */
                 while (true)
                 {
                     Console.Write(
                         "Valor inválido. Digite um número válido ou 0 para voltar: "
                     );
 
+                    /* Ler a entrada do usuário novamente. */
                     entradaCorpos = Console.ReadLine();
 
                     /* Voltar ao menu principal caso o usuário escolha a opção 0 após informar um valor inválido. */
@@ -89,8 +92,10 @@ while (continuar)
             /* Gerar corpos aleatórios com base na quantidade informada pelo usuário. */
             universo.GerarCorposAleatorios(quantidadeCorpos);
 
+            /* Solicitar ao usuário que informe a quantidade de iterações que deseja executar na simulação do universo. */
             Console.Write("Digite a quantidade de iterações: ");
 
+            /* Inicializar a variável que armazenará a quantidade de iterações. */
             int quantidadeIteracoes;
             string? entradaIteracoes = Console.ReadLine();
 
@@ -138,10 +143,12 @@ while (continuar)
             universo.QuantidadeIteracoes =
                 quantidadeIteracoes;
 
+            /* Solicitar ao usuário que informe o tempo entre as iterações do universo. */
             Console.Write(
                 "Digite o tempo entre as iterações (em segundos): "
             );
 
+            /* Inicializar a variável que armazenará o tempo entre as iterações. */
             double tempoEntreIteracoes = 0;
 
             /* Ler a entrada do usuário e substituir vírgulas por pontos para permitir a entrada de números decimais. */
@@ -208,6 +215,7 @@ while (continuar)
             universo.TempoEntreIteracoes =
                 tempoEntreIteracoes;
 
+            /* Exibir uma mensagem informando que o universo foi criado com sucesso. */
             Console.WriteLine();
             Console.WriteLine("Corpos gerados:");
             Console.WriteLine();
@@ -223,12 +231,14 @@ while (continuar)
             int numeroArquivo = 1;
             string caminhoArquivo;
             do
+            /* Gerar o nome do arquivo com base no número do arquivo, incrementando o número a cada iteração. */
             {
                 caminhoArquivo =
                     $"universo_{numeroArquivo}.txt";
 
                 numeroArquivo++;
             }
+            /* Verificar se o arquivo já existe, caso exista, gerar um novo nome de arquivo. */
             while (File.Exists(caminhoArquivo));
 
             /* Salvar o universo criado em um arquivo txt com o nome gerado. */
@@ -260,6 +270,7 @@ while (continuar)
         /* Carregar um universo salvo de um arquivo txt e continuar a simulação. */
         case "2":
 
+            /* Exibir uma mensagem informando que o usuário escolheu carregar um universo salvo. */
             Console.WriteLine("Carregar universo salvo");
             Console.WriteLine();
 
@@ -283,6 +294,7 @@ while (continuar)
             /* Exibir os universos salvos para o usuário escolher. */
             for (int i = 0; i < universosSalvos.Length; i++)
             {
+                /* Exibir o número do universo e o nome do arquivo correspondente. */
                 Console.WriteLine(
                     $"{i + 1} - {Path.GetFileName(universosSalvos[i])}"
                 );
@@ -294,8 +306,10 @@ while (continuar)
             Console.WriteLine();
             Console.Write("Escolha um universo: ");
 
+            /* Inicializar a variável que armazenará a escolha do usuário. */
             int escolhaUniverso;
 
+            /* Verificar se a entrada do usuário é um número válido, caso contrário, solicitar novamente. */
             while (!int.TryParse(
                        Console.ReadLine(),
                        out escolhaUniverso))
@@ -322,6 +336,7 @@ while (continuar)
                 break;
             }
 
+            /*  Obter o caminho do arquivo do universo escolhido pelo usuário. */
             string arquivoEscolhido =
                 universosSalvos[escolhaUniverso - 1];
 
@@ -375,6 +390,7 @@ while (continuar)
             Console.WriteLine("Continuando simulação...");
             Console.WriteLine();
 
+            /* Executar a simulação do universo carregado com base na quantidade de iterações e tempo entre iterações informados no arquivo. */
             universoCarregado.ExecutarSimulacao(
                 universoCarregado.QuantidadeIteracoes,
                 universoCarregado.TempoEntreIteracoes
@@ -416,11 +432,14 @@ while (continuar)
             /* Exibir a opção de voltar ao menu principal. */
             Console.WriteLine("0 - Voltar");
 
+            /* Solicitar ao usuário que escolha um universo para apagar. */
             Console.WriteLine();
             Console.Write("Escolha um universo para apagar: ");
 
+            /* Inicializar a variável que armazenará a escolha do usuário. */
             int escolhaApagar;
 
+            /* Verificar se a entrada do usuário é um número válido, caso contrário, solicitar novamente. */
             while (!int.TryParse(
                        Console.ReadLine(),
                        out escolhaApagar))
@@ -461,12 +480,59 @@ while (continuar)
 
             break;
 
+        /* Apagar todos os universos salvos de uma vez. */
+        case "4":
+
+            /* Exibir uma mensagem informando que o usuário escolheu apagar todos os universos salvos. */
+            Console.WriteLine("Apagar todos os universos salvos");
+            Console.WriteLine();
+
+            /* Buscar todos os arquivos de universos salvos para apagar. */
+            string[] universosParaApagarTodos =
+                Directory.GetFiles(".", "universo_*.txt");
+
+            /* Verificar se existem universos salvos para apagar. */
+            if (universosParaApagarTodos.Length == 0)
+            {
+                Console.WriteLine("Nenhum universo salvo foi encontrado no sistema.");
+                break;
+            }
+
+            /* Solicitar confirmação do usuário antes de apagar todos os arquivos. */
+            Console.WriteLine($"Isso vai apagar {universosParaApagarTodos.Length} arquivo(s) salvo(s).");
+            Console.Write("Tem certeza? (S/N): ");
+
+            /* Ler a confirmação do usuário. */
+            string? confirmacaoApagarTodos = Console.ReadLine();
+
+            /* Verificar se a confirmação do usuário é válida, caso contrário, cancelar a operação. */
+            if (confirmacaoApagarTodos == null ||
+                confirmacaoApagarTodos.Trim().ToUpper() != "S")
+            {
+                /* Cancelar a operação caso o usuário não confirme com "S". */
+                Console.WriteLine();
+                Console.WriteLine("Operação cancelada.");
+                break;
+            }
+
+            /* Apagar todos os arquivos de universos salvos encontrados. */
+            foreach (string arquivoParaApagar in universosParaApagarTodos)
+            {
+                File.Delete(arquivoParaApagar);
+            }
+
+            /* Exibir uma mensagem informando que todos os arquivos foram apagados com sucesso. */
+            Console.WriteLine();
+            Console.WriteLine($"{universosParaApagarTodos.Length} universo(s) apagado(s) com sucesso.");
+
+            break;
 
         /* Encerrar o programa. */
         case "0":
 
             Console.WriteLine("Programa encerrado.");
 
+            /* Definir as variáveis de controle para encerrar o loop principal e não aguardar ENTER antes de sair. */
             continuar = false;
             aguardarEnter = false;
 
@@ -474,6 +540,7 @@ while (continuar)
 
         default:
 
+            /* Caso o usuário escolha uma opção inválida, exibir uma mensagem informando que a opção é inválida. */
             Console.WriteLine("Opção inválida.");
 
             break;
