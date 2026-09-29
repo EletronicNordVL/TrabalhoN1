@@ -59,6 +59,7 @@ while (continuar)
                         "Valor inválido. Digite um número válido ou 0 para voltar: "
                     );
 
+                    /* Ler a entrada do usuário novamente. */
                     entradaCorpos = Console.ReadLine();
 
                     /* Voltar ao menu principal caso o usuário escolha a opção 0 após informar um valor inválido. */
@@ -92,8 +93,10 @@ while (continuar)
             /* Gerar corpos aleatórios com base na quantidade informada pelo usuário. */
             universo.GerarCorposAleatorios(quantidadeCorpos);
 
+            /* Solicitar ao usuário que informe a quantidade de iterações que deseja executar na simulação do universo. */
             Console.Write("Digite a quantidade de iterações: ");
 
+            /* Inicializar a variável que armazenará a quantidade de iterações. */
             int quantidadeIteracoes;
             string? entradaIteracoes = Console.ReadLine();
 

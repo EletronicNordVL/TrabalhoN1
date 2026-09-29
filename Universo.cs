@@ -87,6 +87,7 @@ public class Universo
                     corpo2
                 );
 
+                /* Se a distância for zero, significa que os corpos estão na mesma posição, então não há força a ser calculada. */
                 if (distancia == 0)
                 {
                     continue;

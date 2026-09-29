@@ -52,12 +52,14 @@ namespace TrabalhoN1
             get => densidade;
             set
             {
+                /* A densidade deve ser maior que zero e não pode exceder o limite máximo definido. */
                 if (value <= 0)
                 {
                     throw new ArgumentException(
                         "A densidade deve ser maior que zero.");
                 }
 
+                /* Verifica se a densidade excede o limite máximo permitido. */
                 if (value > DensidadeMaxima)
                 {
                     throw new ArgumentException(
@@ -93,6 +95,7 @@ namespace TrabalhoN1
             double velX,
             double velY)
         {
+            /* Inicializa as propriedades do corpo com os valores fornecidos. */
             Nome = nome;
             Massa = massa;
             Densidade = densidade;
