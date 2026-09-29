@@ -15,7 +15,8 @@ while (continuar)
     /* Exibir as opções do menu. */
     Console.WriteLine("1 - Criar novo universo");
     Console.WriteLine("2 - Carregar universo salvo");
-    Console.WriteLine("3 - Apagar universo salvo");
+    Console.WriteLine("3 - Selecionar e apagar algum universo salvo");
+    Console.WriteLine("4 - Apagar todos os universos salvos");
     Console.WriteLine("0 - Sair do menu");
 
     /* Solicitar ao usuário que escolha uma opção do menu. */
@@ -429,11 +430,14 @@ while (continuar)
             /* Exibir a opção de voltar ao menu principal. */
             Console.WriteLine("0 - Voltar");
 
+            /* Solicitar ao usuário que escolha um universo para apagar. */
             Console.WriteLine();
             Console.Write("Escolha um universo para apagar: ");
 
+            /* Inicializar a variável que armazenará a escolha do usuário. */
             int escolhaApagar;
 
+            /* Verificar se a entrada do usuário é um número válido, caso contrário, solicitar novamente. */
             while (!int.TryParse(
                        Console.ReadLine(),
                        out escolhaApagar))
@@ -474,12 +478,59 @@ while (continuar)
 
             break;
 
+        /* Apagar todos os universos salvos de uma vez. */
+        case "4":
+
+            /* Exibir uma mensagem informando que o usuário escolheu apagar todos os universos salvos. */
+            Console.WriteLine("Apagar todos os universos salvos");
+            Console.WriteLine();
+
+            /* Buscar todos os arquivos de universos salvos para apagar. */
+            string[] universosParaApagarTodos =
+                Directory.GetFiles(".", "universo_*.txt");
+
+            /* Verificar se existem universos salvos para apagar. */
+            if (universosParaApagarTodos.Length == 0)
+            {
+                Console.WriteLine("Nenhum universo salvo foi encontrado no sistema.");
+                break;
+            }
+
+            /* Solicitar confirmação do usuário antes de apagar todos os arquivos. */
+            Console.WriteLine($"Isso vai apagar {universosParaApagarTodos.Length} arquivo(s) salvo(s).");
+            Console.Write("Tem certeza? (S/N): ");
+
+            /* Ler a confirmação do usuário. */
+            string? confirmacaoApagarTodos = Console.ReadLine();
+
+            /* Verificar se a confirmação do usuário é válida, caso contrário, cancelar a operação. */
+            if (confirmacaoApagarTodos == null ||
+                confirmacaoApagarTodos.Trim().ToUpper() != "S")
+            {
+                /* Cancelar a operação caso o usuário não confirme com "S". */
+                Console.WriteLine();
+                Console.WriteLine("Operação cancelada.");
+                break;
+            }
+
+            /* Apagar todos os arquivos de universos salvos encontrados. */
+            foreach (string arquivoParaApagar in universosParaApagarTodos)
+            {
+                File.Delete(arquivoParaApagar);
+            }
+
+            /* Exibir uma mensagem informando que todos os arquivos foram apagados com sucesso. */
+            Console.WriteLine();
+            Console.WriteLine($"{universosParaApagarTodos.Length} universo(s) apagado(s) com sucesso.");
+
+            break;
 
         /* Encerrar o programa. */
         case "0":
 
             Console.WriteLine("Programa encerrado.");
 
+            /* Definir as variáveis de controle para encerrar o loop principal e não aguardar ENTER antes de sair. */
             continuar = false;
             aguardarEnter = false;
 
@@ -487,6 +538,7 @@ while (continuar)
 
         default:
 
+            /* Caso o usuário escolha uma opção inválida, exibir uma mensagem informando que a opção é inválida. */
             Console.WriteLine("Opção inválida.");
 
             break;
