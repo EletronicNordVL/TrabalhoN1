@@ -1,14 +1,19 @@
 'use strict';
 
+/* Função auxiliar para obter elementos do DOM pelo ID. */
 const $ = id => document.getElementById(id);
 const canvas = $('universe-canvas');
 const ctx = canvas.getContext('2d');
 const colors = ['#dfba78', '#a9bf8b', '#7baea3', '#b2a2c8', '#d29176', '#8ca8c4', '#d2cb98', '#c69bae'];
 const numberFormat = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 2 });
+
+/* Variáveis globais para armazenar o estado da simulação, configurações de visualização, rastros dos corpos e controle de execução. */
 let state, initialState, selected = 0, running = false, busy = false, transition = false;
 let width = 1, height = 1, zoom = 1, center = { x: 0, y: 0 }, extent = 7e9;
 let trails = [], editing = null, timer = null, toastTimer = null, dragging = null;
 let moved = false, lastListUpdate = 0;
+
+/* Função auxiliar para clonar objetos de forma profunda, garantindo que alterações no estado atual não afetem o estado inicial. */
 const clone = value => structuredClone(value);
 const color = index => colors[index % colors.length];
 const sci = value => {
@@ -21,6 +26,7 @@ const sci = value => {
   return numberFormat.format(value);
 };
 
+/* Função para fazer requisições API. */
 async function api(path, data, method = 'POST') {
   const response = await fetch(path, { method, headers: data === undefined ? {} : { 'Content-Type': 'application/json' }, body: data === undefined ? undefined : JSON.stringify(data) });
   if (!response.ok) {
@@ -31,6 +37,7 @@ async function api(path, data, method = 'POST') {
   return response.status === 204 ? null : response.json();
 }
 
+/* Função para exibir mensagens temporárias na tela. */
 function toast(message, error = false) {
   clearTimeout(toastTimer);
   $('toast').textContent = message;
@@ -39,6 +46,7 @@ function toast(message, error = false) {
   toastTimer = setTimeout(() => { $('toast').hidden = true; }, error ? 7000 : 4000);
 }
 
+/* Função para exibir um diálogo de confirmação e aguardar a resposta do usuário. */
 function confirmAction(title, message) {
   pause();
   $('confirm-title').textContent = title;
@@ -61,17 +69,26 @@ function confirmAction(title, message) {
   });
 }
 
+/* Função para habilitar ou desabilitar os controles da interface com base no estado atual da simulação. */
 function setControls() {
   const blocked = !state || busy || transition;
-  for (const id of ['play-button', 'step-button', 'reset-button', 'save-button', 'export-button', 'add-body', 'edit-body', 'generate-button', 'new-button', 'import-button', 'library-button', 'retry-button']) $(id).disabled = blocked;
-  for (const id of ['generate-button', 'new-button', 'retry-button']) $(id).disabled = busy || transition;
-  // Pausar deve continuar disponível durante a requisição de um passo.
+  for (const id of ['play-button', 'step-button', 'reset-button', 'save-button', 'export-button', 'add-body', 'edit-body', 'import-button', 'library-button'])
+    $(id).disabled = blocked;
+
+  /* Novo universo e Gerar corpos aleatórios não precisam ser
+   * desabilitados durante cada requisição de uma iteração.
+   * O bloqueio durante a troca de universo continua sendo mantido. */
+  for (const id of ['generate-button', 'new-button', 'retry-button'])
+    $(id).disabled = !state ? id !== 'retry-button' : transition;
+
+  /* Pausar deve continuar disponível durante a requisição de um passo. */
   $('play-button').disabled = !state || transition;
   $('step-button').disabled = blocked || running || state?.iteration >= state?.quantidadeIteracoes;
   $('iterations').disabled = running || busy || transition;
   $('timestep').disabled = running || busy || transition;
 }
 
+/* Função para atualizar o status da simulação e os controles da interface. */
 function updateStatus() {
   const completed = state && state.iteration >= state.quantidadeIteracoes;
   $('status').textContent = running ? 'EM MOVIMENTO' : completed ? 'CONCLUÍDO' : 'PAUSADO';
@@ -84,12 +101,14 @@ function updateStatus() {
   setControls();
 }
 
+/* Função para pausar a simulação e atualizar o status da interface. */
 function pause() {
   running = false;
   clearTimeout(timer);
   updateStatus();
 }
 
+/* Função para aplicar um novo estado à simulação, redefinir as condições iniciais e atualizar a interface. */
 function applyState(next, title = 'Universo personalizado') {
   pause();
   state = next;
@@ -104,6 +123,7 @@ function applyState(next, title = 'Universo personalizado') {
   updateUI(true);
 }
 
+/* Função para gerar um novo universo aleatório, com confirmação do usuário se houver um estado existente. */
 async function generate(ask = true) {
   if (busy || transition) return;
   if (ask && state && !await confirmAction('Gerar outro universo?', 'O estado atual será substituído. Salve ou exporte o universo antes de continuar se quiser guardá-lo.')) return;
@@ -112,7 +132,7 @@ async function generate(ask = true) {
   setControls();
   try {
     const count = Number($('body-count').value);
-    if (!Number.isInteger(count) || count < 1 || count > 100) throw new Error('Escolha de 1 a 100 corpos.');
+    if (!Number.isInteger(count) || count < 1) throw new Error('A quantidade de corpos deve ser maior que zero.');
     const next = await api('/api/universes/create', { count });
     applyState(next, 'Universo aleatório');
   } catch (error) {
@@ -121,6 +141,7 @@ async function generate(ask = true) {
   } finally { transition = false; setControls(); }
 }
 
+/* Função para ler as configurações de iterações e passo de tempo da interface, validá-las e aplicá-las ao estado da simulação. */
 function readSettings() {
   const iterations = Number($('iterations').value), timestep = Number($('timestep').value);
   if (!Number.isInteger(iterations) || iterations < 1 || iterations > 1000000 || iterations < state.iteration) throw new Error('O limite deve ser inteiro, entre 1 e 1.000.000, e não menor que a iteração atual.');
@@ -129,6 +150,7 @@ function readSettings() {
   state.tempoEntreIteracoes = timestep;
 }
 
+/* Função para avançar a simulação em um número específico de passos, atualizando o estado e a interface. */
 async function advance(steps = 1) {
   if (busy || transition || !state || state.iteration >= state.quantidadeIteracoes) return;
   busy = true;
@@ -148,12 +170,14 @@ async function advance(steps = 1) {
   finally { busy = false; setControls(); }
 }
 
+/*  Função de loop assíncrono que avança a simulação continuamente enquanto estiver em execução, respeitando a velocidade definida pelo usuário. */
 async function loop() {
   if (!running) return;
   await advance(Number($('speed').value));
   if (running) timer = setTimeout(loop, 40);
 }
 
+/* Função para iniciar ou pausar a simulação, dependendo do estado atual, e atualizar a interface. */
 function play() {
   if (!state || transition) return;
   if (running) { pause(); return; }
@@ -165,6 +189,7 @@ function play() {
   loop();
 }
 
+/* Função para redefinir a simulação para o estado inicial, pausando-a e atualizando a interface. */
 function reset() {
   if (busy || transition || !initialState) return;
   pause();
@@ -175,6 +200,7 @@ function reset() {
   fit(); updateUI(true);
 }
 
+/*  Função para atualizar a interface do usuário com base no estado atual da simulação, incluindo métricas, lista de corpos e detalhes do corpo selecionado. */
 function updateUI(refreshList = false) {
   if (!state) return;
   $('metric-count').textContent = state.corpos.length;
@@ -190,9 +216,9 @@ function updateUI(refreshList = false) {
   updateStatus();
 }
 
+/* Função para renderizar a lista de corpos na interface, mantendo os botões durante a reprodução para preservar o foco e a seleção. */
 function renderBodyList() {
   const list = $('body-list');
-  // Mantém os botões durante a reprodução para preservar foco e seleção.
   if (list.children.length !== state.corpos.length || !list.firstElementChild?.classList.contains('body-item')) {
     list.replaceChildren();
     state.corpos.forEach((body, index) => {
@@ -215,6 +241,7 @@ function renderBodyList() {
   });
 }
 
+/* Função para renderizar os detalhes do corpo selecionado na interface, incluindo nome, massa, densidade, raio, velocidade e posição. */
 function renderDetails() {
   const body = state?.corpos[selected];
   $('body-details').hidden = !body;
@@ -228,6 +255,7 @@ function renderDetails() {
   $('detail-y').textContent = `${sci(body.posY)} m`;
 }
 
+/* Função para ajustar a visualização da simulação para caber todos os corpos na tela, centralizando e dimensionando a visualização de acordo com as posições dos corpos. */
 function fit() {
   if (!state) return;
   const xs = state.corpos.map(c => c.posX), ys = state.corpos.map(c => c.posY);
@@ -237,20 +265,22 @@ function fit() {
   zoom = 1;
 }
 
+/* Funções auxiliares para converter entre coordenadas do mundo e da tela, calcular a escala de pixels e determinar o raio visual de um corpo com base em sua massa. */
 function pixelScale() { return height / extent * zoom; }
 function toScreen(x, y) { const scale = pixelScale(); return { x: width / 2 + (x - center.x) * scale, y: height / 2 - (y - center.y) * scale }; }
 function toWorld(x, y) { const scale = pixelScale(); return { x: center.x + (x - width / 2) / scale, y: center.y - (y - height / 2) / scale }; }
 function visualRadius(body) { return Math.min(25, Math.max(4, Math.log10(body.massa) * 1.2 - 22)); }
 
+/* Função de desenho principal que limpa o canvas, desenha o fundo, a grade, os rastros dos corpos e os próprios corpos com efeitos visuais, atualizando a cada frame. */
 function draw() {
   ctx.clearRect(0, 0, width, height);
-  // É um fundo discreto e determinístico; as estrelas não fazem parte da física.
   for (let i = 0; i < 100; i++) {
     const x = ((i * 137.508) % 997) / 997 * width;
     const y = ((i * 229.31 + 19) % 991) / 991 * height;
     ctx.fillStyle = i % 7 === 0 ? '#9cae9635' : '#9cae9618';
     ctx.fillRect(x, y, i % 7 === 0 ? 1.5 : 1, i % 7 === 0 ? 1.5 : 1);
-  }
+    }
+    /* Função de desenho principal que limpa o canvas, desenha o fundo, a grade, os rastros dos corpos e os próprios corpos com efeitos visuais, atualizando a cada frame. */
   if (state) {
     if ($('grid').checked) drawGrid();
     if ($('trails').checked) trails.forEach((points, index) => {
@@ -259,6 +289,8 @@ function draw() {
       points.forEach((point, j) => { const p = toScreen(point.x, point.y); if (j === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
       ctx.stroke();
     });
+
+      /*  Função de desenho principal que limpa o canvas, desenha o fundo, a grade, os rastros dos corpos e os próprios corpos com efeitos visuais, atualizando a cada frame. */
     state.corpos.forEach((body, index) => {
       const p = toScreen(body.posX, body.posY), radius = visualRadius(body);
       if (p.x < -100 || p.x > width + 100 || p.y < -100 || p.y > height + 100) return;
@@ -279,6 +311,7 @@ function draw() {
   requestAnimationFrame(draw);
 }
 
+/* Função para desenhar a grade de referência no canvas, ajustando o espaçamento das linhas com base na escala atual da visualização. */
 function drawGrid() {
   const scale = pixelScale(), raw = 65 / scale;
   const base = 10 ** Math.floor(Math.log10(raw)), ratio = raw / base;
@@ -292,6 +325,7 @@ function drawGrid() {
   ctx.moveTo(origin.x, 0); ctx.lineTo(origin.x, height); ctx.moveTo(0, origin.y); ctx.lineTo(width, origin.y); ctx.stroke(); ctx.setLineDash([]);
 }
 
+/*  Observador de redimensionamento que ajusta o tamanho do canvas e a escala de pixels com base nas dimensões do elemento "viewport", garantindo que a visualização se adapte às mudanças de tamanho da janela. */
 new ResizeObserver(entries => {
   const rect = entries[0].contentRect;
   width = rect.width; height = rect.height;
@@ -300,6 +334,7 @@ new ResizeObserver(entries => {
   if (state && zoom === 1 && !dragging) fit();
 }).observe($('viewport'));
 
+/* Observadores de eventos para interações do usuário, incluindo rolagem do mouse para zoom, arrastar para mover a visualização e clicar para selecionar corpos. */
 canvas.addEventListener('wheel', event => {
   event.preventDefault();
   const rect = canvas.getBoundingClientRect(), x = event.clientX - rect.left, y = event.clientY - rect.top;
@@ -331,9 +366,9 @@ canvas.addEventListener('pointerup', event => {
 });
 canvas.addEventListener('pointercancel', () => { dragging = null; });
 
+/* Função para abrir o diálogo de edição ou adição de um corpo, preenchendo os campos com os valores atuais do corpo selecionado ou com valores padrão para um novo corpo. */
 function openBody(index = null) {
   if (busy || transition || !state) return;
-  if (index === null && state.corpos.length >= 100) { toast('Limite de 100 corpos atingido.', true); return; }
   pause(); editing = index;
   const body = index === null ? { nome: `Corpo ${state.corpos.length + 1}`, massa: 5e24, densidade: 4500, posX: 3e9, posY: 0, velX: 0, velY: 100 } : state.corpos[index];
   const fields = { name: 'nome', mass: 'massa', density: 'densidade', x: 'posX', y: 'posY', vx: 'velX', vy: 'velY' };
@@ -346,6 +381,7 @@ function openBody(index = null) {
   $('body-dialog').showModal();
 }
 
+/* Função para confirmar a edição ou adição de um corpo, validando os campos e atualizando o estado da simulação com as novas informações do corpo. */
 function commitEdit() {
   state.iteration = 0; state.elapsed = 0;
   initialState = clone(state);
@@ -354,6 +390,7 @@ function commitEdit() {
   fit(); updateUI(true);
 }
 
+/* Observador de envio do formulário de corpo, que lê os valores dos campos, valida-os e atualiza o estado da simulação com as informações do corpo adicionado ou editado. */
 $('body-form').addEventListener('submit', event => {
   event.preventDefault();
   const parse = id => Number($(id).value.trim().replace(',', '.'));
@@ -378,6 +415,7 @@ $('remove-body').addEventListener('click', () => {
   commitEdit(); $('body-dialog').close(); toast('Corpo removido.');
 });
 
+/* Função para salvar o estado atual da simulação no servidor, com confirmação do usuário se houver um estado existente, e exibir uma mensagem de sucesso ou erro. */
 async function save() {
   if (!state || busy || transition) return;
   pause(); transition = true; setControls();
@@ -386,6 +424,7 @@ async function save() {
   finally { transition = false; setControls(); }
 }
 
+/* Função para carregar a lista de universos salvos do servidor, exibindo-os em um diálogo com opções para abrir ou excluir cada arquivo, e atualizando a interface conforme necessário. */
 async function loadLibrary() {
   try {
     const files = await api('/api/universes', undefined, 'GET');
@@ -419,6 +458,7 @@ async function loadLibrary() {
   } catch (error) { toast(error.message, true); }
 }
 
+/* Função para exportar o estado atual da simulação como um arquivo de texto, enviando os dados para o servidor e permitindo que o usuário faça o download do arquivo gerado. */
 async function exportFile() {
   if (!state || busy || transition) return;
   pause(); transition = true; setControls();
@@ -448,6 +488,7 @@ $('import-file').addEventListener('change', async event => {
   finally { transition = false; setControls(); }
 });
 
+/*  Função para ler as configurações de iterações e passo de tempo da interface, validá-las e aplicá-las ao estado da simulação. */
 $('speed').addEventListener('input', () => { $('speed-label').textContent = `${$('speed').value}×`; });
 for (const id of ['iterations', 'timestep']) $(id).addEventListener('change', () => {
   if (!state) return;
@@ -479,6 +520,8 @@ document.addEventListener('keydown', event => {
   if (event.key === '-') zoom = Math.max(.03, zoom / 1.25);
   if (event.key.toLowerCase() === 'f') fit();
 });
+
+/*  Função para pausar a simulação automaticamente quando a aba do navegador não estiver visível, evitando que a simulação continue em segundo plano e consuma recursos desnecessários. */
 document.addEventListener('visibilitychange', () => { if (document.hidden) pause(); });
 setControls();
 draw();

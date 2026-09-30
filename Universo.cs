@@ -152,125 +152,104 @@ public class Universo
         {
             for (int j = i + 1; j < Corpos.Count; j++)
             {
-                Corpo corpo1 = Corpos[i]; /* Corpo 1 é o corpo atual da iteração externa. */
-                Corpo corpo2 = Corpos[j]; /* Corpo 2 é o corpo atual da iteração interna. */
+                /* Obtém os corpos que estão sendo comparados na iteração atual. */
+                Corpo corpo1 = Corpos[i];
+                Corpo corpo2 = Corpos[j];
 
-                /* Calcula a distância entre os corpos para verificar se houve colisão. */
-                double distancia =
-                    CalcularDistancia(corpo1, corpo2);
+                /* Calcula a distância entre os centros dos corpos. */
+                double distancia = CalcularDistancia(corpo1, corpo2);
 
-                /* A soma dos raios dos corpos é utilizada para determinar se houve colisão. */
-                double somaRaios =
-                    corpo1.Raio + corpo2.Raio;
+                /* A soma dos raios define o limite para ocorrer uma colisão. */
+                double somaRaios = corpo1.Raio + corpo2.Raio;
 
-                /* Se a distância entre os corpos for menor ou igual à soma dos raios, significa que houve colisão. */
                 if (distancia <= somaRaios)
                 {
+                    /* Colisão detectada entre os corpos. */
                     Console.WriteLine(
-                        $"Colisão detectada entre " +
-                        $"{corpo1.Nome} e {corpo2.Nome}");
+                        $"Colisão detectada entre {corpo1.Nome} e {corpo2.Nome}");
 
+                    /* Calcula a normal da colisão: direção do corpo 1 para o corpo 2. */
                     double normalX;
                     double normalY;
 
-                    /* Calcula a normal da colisão, que é um vetor unitário apontando da posição do corpo 1 para a posição do corpo 2. */
                     if (distancia > 0)
                     {
-                        normalX =
-                            (corpo2.PosX - corpo1.PosX) / distancia;
-
-                        normalY =
-                            (corpo2.PosY - corpo1.PosY) / distancia;
+                        /* Normaliza a direção da colisão para obter a normal. */
+                        normalX = (corpo2.PosX - corpo1.PosX) / distancia;
+                        normalY = (corpo2.PosY - corpo1.PosY) / distancia;
                     }
                     else
                     {
-                        double diferencaVelX =
-                            corpo1.VelX - corpo2.VelX;
+                        /* Quando os centros coincidem, usa a velocidade relativa para
+                         * definir uma direção de separação e evita divisão por zero. */
+                        double diferencaVelX = corpo2.VelX - corpo1.VelX;
+                        double diferencaVelY = corpo2.VelY - corpo1.VelY;
 
-                        double diferencaVelY =
-                            corpo1.VelY - corpo2.VelY;
+                        /* Calcula o módulo da velocidade relativa para normalizar a direção. */
+                        double moduloVelocidade = Math.Sqrt(
+                            diferencaVelX * diferencaVelX +
+                            diferencaVelY * diferencaVelY);
 
-                        double moduloVelocidade =
-                            Math.Sqrt(
-                                diferencaVelX * diferencaVelX +
-                                diferencaVelY * diferencaVelY
-                            );
-
-                        /* Se a velocidade relativa for zero, define a normal como (1, 0) para evitar divisão por zero. */
-                        if (moduloVelocidade == 0)
+                        /* Normaliza a direção da velocidade relativa para obter a normal da colisão. */
+                        if (moduloVelocidade > 0)
                         {
-                            normalX = 1;
-                            normalY = 0;
+                            /* Normaliza a direção da velocidade relativa para obter a normal da colisão. */
+                            normalX = diferencaVelX / moduloVelocidade;
+                            normalY = diferencaVelY / moduloVelocidade;
                         }
                         else
                         {
-                            normalX =
-                                diferencaVelX / moduloVelocidade;
-
-                            normalY =
-                                diferencaVelY / moduloVelocidade;
+                            /* Se a velocidade relativa também for zero, define uma normal arbitrária. */
+                            normalX = 1;
+                            normalY = 0;
                         }
                     }
 
-                    /* A normal da colisão é um vetor unitário que aponta da posição do 
-                     * corpo 1 para a posição do corpo 2. */
-                    Console.WriteLine(
-                        $"Normal da colisão: " +
-                        $"({normalX:F4}, {normalY:F4})");
+                    /* Primeiro resolve fisicamente a sobreposição. E, mesmo quando os corpos já estão se afastando. */
+                    double sobreposicao = somaRaios - distancia;
 
-                    /* Calcula a velocidade relativa entre os corpos na direção da normal da colisão. */
-                    double velocidadeRelativaX =
-                        corpo2.VelX - corpo1.VelX;
-
-                    double velocidadeRelativaY =
-                        corpo2.VelY - corpo1.VelY;
-
-                    /* Aqui é para calcular a velocidade relativa entre os corpos na direção do impacto (normal) */
-                    double velocidadeNaNormal =
-                        velocidadeRelativaX * normalX
-                        + velocidadeRelativaY * normalY;
-
-                    Console.WriteLine(
-                        $"Velocidade relativa na normal: " +
-                        $"{velocidadeNaNormal:F4}");
-
-                    /* Se a velocidade relativa é positiva, os corpos já estão se afastando e não é necessário tratar a colisão. */
-                    if (velocidadeNaNormal >= 0)
+                    if (sobreposicao > 0)
                     {
-                        continue;
+                        /* Calcula a correção de posição para cada corpo, dividindo a sobreposição pela metade. */
+                        double correcao = sobreposicao / 2.0;
+
+                        /* Move os corpos para fora da sobreposição ao longo da normal da colisão. */
+                        corpo1.PosX -= correcao * normalX;
+                        corpo1.PosY -= correcao * normalY;
+
+                        corpo2.PosX += correcao * normalX;
+                        corpo2.PosY += correcao * normalY;
                     }
 
-                    /* Conservação da Quantidade de Movimento (Q = m * v) */
-                    /* Este cálculo de impulso deriva da fórmula da conservação do momento linear em uma colisão elástica bidimensional (Q_antes = Q_depois). */
-                    double impulso =
-                        -(2 * velocidadeNaNormal)
-                        / ((1 / corpo1.Massa) + (1 / corpo2.Massa));
+                    /* Velocidade relativa na direção da normal da colisão. */
+                    double velocidadeRelativaX = corpo2.VelX - corpo1.VelX;
+                    double velocidadeRelativaY = corpo2.VelY - corpo1.VelY;
 
-                    /* Calcula o impulso nas direções X e Y usando a normal da colisão. */
-                    double impulsoX = impulso * normalX;
-                    double impulsoY = impulso * normalY;
+                    /* Projeção da velocidade relativa na direção da normal. */
+                    double velocidadeNaNormal =
+                        velocidadeRelativaX * normalX +
+                        velocidadeRelativaY * normalY;
 
-                    /* Aplica a alteração das velocidades usando J = Delta_Q (Impulso = variação do momento) */
-                    /* Portanto, isolamos a velocidade: Delta_v = J / m */
-                    corpo1.VelX -= impulsoX / corpo1.Massa; /* Subtrai a velocidade X do corpo 1 na direção da normal. */
-                    corpo1.VelY -= impulsoY / corpo1.Massa; 
+                    /* Se for negativo, os corpos estão se aproximando. Nesse caso aplicamos o impulso da colisão elástica. Se for zero ou positivo, eles já 
+                     * estão se afastando,então não aplicamos outro impulso. */
+                    if (velocidadeNaNormal < 0)
+                    {
+                        /* Conservação da quantidade de movimento (Q = m * v).
+                         * O cálculo considera uma colisão elástica. */
+                        double impulso =
+                            -(2 * velocidadeNaNormal) /
+                            ((1 / corpo1.Massa) + (1 / corpo2.Massa));
 
-                    corpo2.VelX += impulsoX / corpo2.Massa; /* Adiciona a velocidade X do corpo 2 na direção da normal. */
-                    corpo2.VelY += impulsoY / corpo2.Massa;
+                        double impulsoX = impulso * normalX;
+                        double impulsoY = impulso * normalY;
 
-                    /* Resolve a sobreposição: separa os corpos fisicamente para não ficarem "presos". */
-                    double sobreposicao =
-                        somaRaios - distancia;
+                        /* Aplica o impulso nas componentes X e Y das velocidades. */
+                        corpo1.VelX -= impulsoX / corpo1.Massa;
+                        corpo1.VelY -= impulsoY / corpo1.Massa;
 
-                    /* Divide a sobreposição igualmente entre os dois corpos para movê-los para fora da colisão. */
-                    double correcao =
-                        sobreposicao / 2;
-
-                    corpo1.PosX -= correcao * normalX; /* Move o corpo 1 para trás na direção da normal. */
-                    corpo1.PosY -= correcao * normalY; 
-
-                    corpo2.PosX += correcao * normalX; /* Move o corpo 2 para frente na direção da normal. */
-                    corpo2.PosY += correcao * normalY;
+                        corpo2.VelX += impulsoX / corpo2.Massa;
+                        corpo2.VelY += impulsoY / corpo2.Massa;
+                    }
                 }
             }
         }
